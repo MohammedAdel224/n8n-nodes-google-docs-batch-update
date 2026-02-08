@@ -40,12 +40,12 @@ export class GoogleDocsBatchUpdate implements INodeType {
                 displayName: 'Resource',
                 name: 'resource',
                 type: 'options',
+                default: '',
                 noDataExpression: true,
                 options: categoryMetadata.map(cat => ({
                     name: cat.name,
                     value: cat.value,
                 })),
-                default: categoryMetadata[0]?.value || '',
             },
             ...Object.values(categoryDescriptions).flat(),
         ]
