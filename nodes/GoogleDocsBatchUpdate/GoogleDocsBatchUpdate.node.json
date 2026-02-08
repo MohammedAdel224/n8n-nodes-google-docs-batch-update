@@ -1,0 +1,20 @@
+{
+	"node": "n8n-nodes-base.GoogleDocsBatchUpdate",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": [
+		"GoogleDocs"
+	],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": ""
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": ""
+			}
+		]
+	}
+}
