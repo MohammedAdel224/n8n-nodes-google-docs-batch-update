@@ -49,6 +49,7 @@
 		"n8n-workflow": "*"
 	},
 	"publishConfig": {
+		"registry": "https://registry.npmjs.org/",
 		"access": "public"
 	}
 }
