@@ -59,7 +59,7 @@ export const sendRequestDescription: INodeProperties[] = [
 			{
 				name: 'From Input',
 				value: 'input',
-				description: 'Get requests from input data (single request, array of requests, or multiple input items)',
+				description: 'Get requests from input data (supports {request:{...}}, single request, array of requests, or multiple input items)',
 			},
 			{
 				name: 'Define Below',
@@ -110,25 +110,44 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 				// Collect requests from all input items
 				for (const item of items) {
 					const inputData = item.json;
+					const unwrap = (obj: unknown): IDataObject | null => {
+						if (typeof obj !== 'object' || obj === null) return null;
+						const asDataObject = obj as IDataObject;
+						if (asDataObject.request && typeof asDataObject.request === 'object' && asDataObject.request !== null) {
+							return asDataObject.request as IDataObject;
+						}
+						return asDataObject;
+					};
 					
 					// Handle array of requests
 					if (Array.isArray(inputData)) {
-						requests.push(...inputData);
+						for (const element of inputData) {
+							const unwrapped = unwrap(element);
+							if (unwrapped) requests.push(unwrapped);
+						}
 					}
 					// Handle object with requests property
 					else if (inputData.requests && Array.isArray(inputData.requests)) {
-						requests.push(...(inputData.requests as IDataObject[]));
+						for (const element of inputData.requests as IDataObject[]) {
+							const unwrapped = unwrap(element);
+							if (unwrapped) requests.push(unwrapped);
+						}
+					}
+					// Handle object with request property (output of Create Request builders)
+					else if (inputData.request && typeof inputData.request === 'object' && inputData.request !== null) {
+						requests.push(inputData.request as IDataObject);
 					}
 					// Handle single request object
 					else if (typeof inputData === 'object' && inputData !== null) {
-						requests.push(inputData);
+						const unwrapped = unwrap(inputData);
+						if (unwrapped) requests.push(unwrapped);
 					}
 				}
 				
 				if (requests.length === 0) {
 					throw new NodeOperationError(
 						context.getNode(),
-						'No valid requests found in input data. Input must be request object(s) or array(s) of requests.',
+						'No valid requests found in input data. Input must contain request object(s), arrays of request objects, or {request:{...}} items from Create Request builders.',
 						{ itemIndex }
 					);
 				}

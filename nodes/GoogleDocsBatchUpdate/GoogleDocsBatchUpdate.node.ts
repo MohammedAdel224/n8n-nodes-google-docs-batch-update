@@ -55,6 +55,22 @@ export class GoogleDocsBatchUpdate implements INodeType {
         const items = this.getInputData();
         const outputs: INodeExecutionData[] = [];
 
+        // API operations (like Send Request) are intended to run once per execution,
+        // even if there are multiple input items (the requests can be collected from all items).
+        if (items.length > 0) {
+            const firstResource = this.getNodeParameter('resource', 0) as string;
+            const firstOperation = this.getNodeParameter('operation', 0) as string;
+            const firstMethod = getOperation(firstResource, firstOperation);
+            if ('_isApiOperation' in firstMethod && firstMethod._isApiOperation) {
+                const result = await firstMethod.execute(this, 0);
+                outputs.push({
+                    json: result,
+                    pairedItem: 0,
+                });
+                return [outputs];
+            }
+        }
+
         for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
             try {
                 const resource = this.getNodeParameter('resource', itemIndex) as string;
@@ -65,7 +81,7 @@ export class GoogleDocsBatchUpdate implements INodeType {
                 // Check if this is an API operation or a request builder
                 let result: IDataObject;
                 if ('_isApiOperation' in method && method._isApiOperation) {
-                    // This is an API operation - execute it
+                    // API operations are handled above and should not reach here
                     result = await method.execute(this, itemIndex);
                 } else {
                     // This is a request builder - call it as a function
