@@ -16,7 +16,7 @@ Use it when you need advanced Google Docs edits like **text styling, tables, tab
 
 ## Install
 
-This package is published to npm as `n8n-nodes-google-docs-batch-update`.
+This package is published to npm as [`n8n-nodes-google-docs-batch-update`](https://www.npmjs.com/package/n8n-nodes-google-docs-batch-update).
 
 Important: Installing community nodes from npm is only available on **self-hosted n8n**. Unverified community nodes aren't available on n8n Cloud.
 
@@ -31,7 +31,7 @@ Important: Installing community nodes from npm is only available on **self-hoste
 4. Accept the risk prompt and install
 5. Restart n8n if prompted
 
-Official n8n docs: https://docs.n8n.io/integrations/community-nodes/installation/gui-install/
+Official n8n docs: [GUI installation](https://docs.n8n.io/integrations/community-nodes/installation/gui-install/)
 
 ### Option B — Manual install (Docker / restricted installs)
 
@@ -47,7 +47,7 @@ Official n8n docs: https://docs.n8n.io/integrations/community-nodes/installation
 
 3. Restart n8n
 
-Official n8n docs: https://docs.n8n.io/integrations/community-nodes/installation/manual-install/
+Official n8n docs: [Manual installation](https://docs.n8n.io/integrations/community-nodes/installation/manual-install/)
 
 ---
 
@@ -262,10 +262,10 @@ npm run lint:fix
 
 ## References
 
-- n8n community nodes: https://docs.n8n.io/integrations/community-nodes/
-- Install & manage community nodes: https://docs.n8n.io/integrations/community-nodes/installation/
-- Google Docs API (REST): https://developers.google.com/docs/api/reference/rest
-- `documents.batchUpdate`: https://developers.google.com/docs/api/reference/rest/v1/documents/batchUpdate
+- [n8n community nodes](https://docs.n8n.io/integrations/community-nodes/)
+- [Install & manage community nodes](https://docs.n8n.io/integrations/community-nodes/installation/)
+- [Google Docs API (REST)](https://developers.google.com/docs/api/reference/rest)
+- [`documents.batchUpdate`](https://developers.google.com/docs/api/reference/rest/v1/documents/batchUpdate)
 
 ---
 
