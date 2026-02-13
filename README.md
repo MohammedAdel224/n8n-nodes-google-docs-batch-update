@@ -234,9 +234,14 @@ Minimal example:
 2. Select **Resource → Send Request**
 3. Set **Document ID**
 4. Choose **Requests Source** (`From Input` or `Define Below`)
-5. Execute the workflow
+5. Choose **Run For Each Input Item**:
+   - `false` (default): one API call with requests collected from all input items in order
+   - `true`: one API call per input item
+6. Execute the workflow
 
-Note: **Send Request executes once per workflow execution** and sends a single `documents.batchUpdate` call.
+Notes:
+- In aggregate mode (`Run For Each Input Item = false`), requests are sent in the same order they are received from input items.
+- In per-item mode (`Run For Each Input Item = true`), each input item is sent independently, preserving request order inside that item.
 
 ---
 

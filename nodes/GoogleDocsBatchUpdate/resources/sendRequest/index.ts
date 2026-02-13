@@ -71,6 +71,19 @@ export const sendRequestDescription: INodeProperties[] = [
 		description: 'Where to get the requests from',
 	},
 	{
+		displayName: 'Run For Each Input Item',
+		name: 'runForEachInput',
+		type: 'boolean',
+		default: false,
+		displayOptions: {
+			show: {
+				resource: ['sendRequest'],
+				operation: ['send'],
+			},
+		},
+		description: 'Whether to execute one API call per input item. If disabled, executes one API call with requests collected from all input items in order.',
+	},
+	{
 		displayName: 'Requests',
 		name: 'requests',
 		type: 'json',
@@ -100,49 +113,51 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 		execute: async (context: IExecuteFunctions, itemIndex: number) => {
 			const documentId = context.getNodeParameter('documentId', itemIndex) as string;
 			const requestsSource = context.getNodeParameter('requestsSource', itemIndex) as string;
+			const runForEachInput = context.getNodeParameter('runForEachInput', itemIndex) as boolean;
 
 			let requests: IDataObject[] = [];
+			const unwrap = (obj: unknown): IDataObject | null => {
+				if (typeof obj !== 'object' || obj === null) return null;
+				const asDataObject = obj as IDataObject;
+				if (asDataObject.request && typeof asDataObject.request === 'object' && asDataObject.request !== null) {
+					return asDataObject.request as IDataObject;
+				}
+				return asDataObject;
+			};
 
-			if (requestsSource === 'input') {
-				// Get requests from input data - handle multiple items
-				const items = context.getInputData();
-				
-				// Collect requests from all input items
-				for (const item of items) {
+			const collectRequestsFromItems = (inputItems: Array<{ json: IDataObject }>) => {
+				const collected: IDataObject[] = [];
+				for (const item of inputItems) {
 					const inputData = item.json;
-					const unwrap = (obj: unknown): IDataObject | null => {
-						if (typeof obj !== 'object' || obj === null) return null;
-						const asDataObject = obj as IDataObject;
-						if (asDataObject.request && typeof asDataObject.request === 'object' && asDataObject.request !== null) {
-							return asDataObject.request as IDataObject;
-						}
-						return asDataObject;
-					};
-					
-					// Handle array of requests
+
 					if (Array.isArray(inputData)) {
 						for (const element of inputData) {
 							const unwrapped = unwrap(element);
-							if (unwrapped) requests.push(unwrapped);
+							if (unwrapped) collected.push(unwrapped);
 						}
 					}
-					// Handle object with requests property
 					else if (inputData.requests && Array.isArray(inputData.requests)) {
 						for (const element of inputData.requests as IDataObject[]) {
 							const unwrapped = unwrap(element);
-							if (unwrapped) requests.push(unwrapped);
+							if (unwrapped) collected.push(unwrapped);
 						}
 					}
-					// Handle object with request property (output of Create Request builders)
 					else if (inputData.request && typeof inputData.request === 'object' && inputData.request !== null) {
-						requests.push(inputData.request as IDataObject);
+						collected.push(inputData.request as IDataObject);
 					}
-					// Handle single request object
 					else if (typeof inputData === 'object' && inputData !== null) {
 						const unwrapped = unwrap(inputData);
-						if (unwrapped) requests.push(unwrapped);
+						if (unwrapped) collected.push(unwrapped);
 					}
 				}
+
+				return collected;
+			};
+
+			if (requestsSource === 'input') {
+				const items = context.getInputData();
+				const scopedItems = runForEachInput ? [items[itemIndex]].filter((item): item is { json: IDataObject } => !!item) : items as Array<{ json: IDataObject }>;
+				requests = collectRequestsFromItems(scopedItems);
 				
 				if (requests.length === 0) {
 					throw new NodeOperationError(

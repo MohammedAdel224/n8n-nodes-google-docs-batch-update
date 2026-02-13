@@ -55,13 +55,14 @@ export class GoogleDocsBatchUpdate implements INodeType {
         const items = this.getInputData();
         const outputs: INodeExecutionData[] = [];
 
-        // API operations (like Send Request) are intended to run once per execution,
-        // even if there are multiple input items (the requests can be collected from all items).
+        // API operations (like Send Request) can run once per execution (aggregate mode)
+        // or once per item (per-item mode), based on the node parameter.
         if (items.length > 0) {
             const firstResource = this.getNodeParameter('resource', 0) as string;
             const firstOperation = this.getNodeParameter('operation', 0) as string;
             const firstMethod = getOperation(firstResource, firstOperation);
-            if ('_isApiOperation' in firstMethod && firstMethod._isApiOperation) {
+            const runForEachInput = this.getNodeParameter('runForEachInput', 0, false) as boolean;
+            if ('_isApiOperation' in firstMethod && firstMethod._isApiOperation && !runForEachInput) {
                 const result = await firstMethod.execute(this, 0);
                 outputs.push({
                     json: result,
