@@ -1,5 +1,5 @@
 {
-	"name": "@mohammed-adel/n8n-nodes-google-docs-batch-update",
+	"name": "n8n-nodes-google-docs-batch-update",
 	"version": "1.0.3",
 	"description": "This n8n node package allows you to perform batch updates on Google Docs documents using the Google Docs API.",
 	"license": "MIT",
