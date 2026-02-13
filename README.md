@@ -1,267 +1,101 @@
 # n8n-nodes-google-docs-batch-update
 
-This is an n8n community node that lets you perform batch updates on Google Docs documents using the Google Docs API.
+Community node for n8n to build and send Google Docs `documents.batchUpdate` requests.
 
-[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
+## What this node does
 
-[Installation](#installation)  
-[Features](#features)  
-[Operations](#operations)  
-[Credentials](#credentials)  
-[Usage](#usage)  
-[Examples](#examples)  
-[Compatibility](#compatibility)  
-[Resources](#resources)
+- Builds Google Docs request objects with form-based fields (no hand-writing full JSON for every operation)
+- Supports many request types (text, tables, images, named ranges, bullets, headers/footers, section/document style, tabs)
+- Sends one or more requests to Google Docs in a single batch update call
+- Accepts requests from previous items (`From Input`) or pasted JSON (`Define Below`)
 
 ## Installation
 
-Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+Use n8n Community Nodes or install manually:
 
-### Manual Installation
+```bash
+npm install n8n-nodes-google-docs-batch-update
+```
 
-1. Navigate to your n8n installation directory
-2. Install the package:
-   ```bash
-   npm install n8n-nodes-google-docs-batch-update
-   ```
-3. Restart n8n
+Then restart n8n.
 
-## Features
+Official n8n guide: https://docs.n8n.io/integrations/community-nodes/installation/
 
-- **37 Request Types** across 8 categories for building Google Docs batch update requests
-- **Direct API Integration** to send requests to Google Docs
-- **Flexible Input** - Accept single requests, arrays, or multiple input items
-- **OAuth2 Authentication** with Google
-- **Type-Safe** - Built with TypeScript for better development experience
+## Requirements
 
-## Operations
-
-This node provides two main modes of operation:
-
-### 1. Create Request Resources
-
-Build individual request objects for Google Docs batch updates. Choose from 8 categories:
-
-#### Bullets
-- Create Paragraph Bullets
-- Delete Paragraph Bullets
-
-#### Document
-- Create Footnote
-- Delete Content Range
-- Delete Positioned Object
-- Insert Page Break
-- Insert Person
-- Insert Section Break
-- Update Document Style
-- Update Paragraph Style
-- Update Section Style
-
-#### Headers & Footers
-- Create Footer
-- Create Header
-- Delete Footer
-- Delete Header
-
-#### Images
-- Insert Inline Image
-- Replace Image
-
-#### Named Ranges
-- Create Named Range
-- Delete Named Range
-- Replace Named Range Content
-
-#### Tables
-- Delete Table Column
-- Delete Table Row
-- Insert Table
-- Insert Table Column
-- Insert Table Row
-- Merge Table Cells
-- Pin Table Header Rows
-- Unmerge Table Cells
-- Update Table Cell Style
-- Update Table Column Properties
-- Update Table Row Style
-
-#### Tabs
-- Add Document Tab
-- Delete Tab
-- Update Document Tab Properties
-
-#### Text
-- Insert Text
-- Replace All Text
-- Update Text Style
-
-### 2. Send Request
-
-Send batch update requests directly to Google Docs API:
-- **From Input** - Collect requests from previous nodes (supports single request, arrays, or multiple items)
-- **Define Below** - Write JSON directly in the node
+- n8n `1.x`
+- Node.js `18+`
+- Google account with access to the target Google Docs files
 
 ## Credentials
 
-This node requires Google OAuth2 credentials to send requests via the "Send Request" resource.
+The node includes `Google Docs OAuth2 API` credentials.
 
-### Setting Up Google OAuth2
+1. Open Google Cloud Console: https://console.cloud.google.com/
+2. Enable **Google Docs API**
+3. Create OAuth client credentials
+4. In n8n, create **Google Docs OAuth2 API** credentials and connect your account
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
-3. Enable the Google Docs API
-4. Create OAuth 2.0 credentials:
-   - Go to **APIs & Services** > **Credentials**
-   - Click **Create Credentials** > **OAuth client ID**
-   - Choose **Web application**
-   - Add authorized redirect URIs (your n8n OAuth callback URL)
-5. Copy the **Client ID** and **Client Secret**
-6. In n8n, create a new **Google Docs OAuth2 API** credential
-7. Paste your Client ID and Client Secret
-8. Connect your Google account
+Required scope:
 
-**Required Scope:** `https://www.googleapis.com/auth/documents`
+- `https://www.googleapis.com/auth/documents`
 
-> **Note:** The "Create Request" resources don't require credentials - they only build request objects. Credentials are only needed when using the "Send Request" resource.
+Note: Create-request resources only build JSON objects; credentials are only required when using **Send Request**.
 
-## Usage
+## Quick usage pattern
 
-### Basic Workflow Pattern
+1. Add one or more **Create Request** nodes to build operations
+2. Connect them to a **Send Request** node
+3. Set `Document ID`
+4. Set `Requests Source`:
+    - `From Input` to collect requests from upstream nodes
+    - `Define Below` to provide raw JSON array
 
-The typical workflow structure is:
+## Minimal example (Define Below)
 
-1. **Build Requests** - Use "Create Request" resources to build individual operations
-2. **Collect** - Multiple request nodes feed into a single "Send Request" node
-3. **Send** - Use "Send Request" resource to apply all changes at once
+```json
+[
+   {
+      "insertText": {
+         "location": { "index": 1 },
+         "text": "Hello from n8n\n"
+      }
+   },
+   {
+      "updateTextStyle": {
+         "range": { "startIndex": 1, "endIndex": 15 },
+         "textStyle": { "bold": true },
+         "fields": "bold"
+      }
+   }
+]
+```
 
-### Why Two Modes?
+## Common issues
 
-- **Create Request** - Provides a UI-friendly way to build complex request objects with validation and auto-completion
-- **Send Request** - Handles API authentication and batch sending. Accepts requests from multiple sources.
-
-This separation allows you to:
-- Build multiple updates in parallel
-- Combine different operation types
-- Review/modify requests before sending
-- Reuse request templates
-
-## Examples
-
-### Example 1: Insert Text and Format It
-
-1. **Node 1** - Google Docs Batch Update (Create Text Request)
-   - Resource: Create Text Request
-   - Operation: Insert Text
-   - Text: "Hello World"
-   - Location Index: 1
-
-2. **Node 2** - Google Docs Batch Update (Create Text Request)
-   - Resource: Create Text Request
-   - Operation: Update Text Style
-   - Range: Start Index: 1, End Index: 12
-   - Bold: true
-
-3. **Node 3** - Google Docs Batch Update (Send Request)
-   - Resource: Send Request
-   - Operation: Send to Google Docs API
-   - Document ID: `your-document-id`
-   - Requests Source: From Input
-
-### Example 2: Create a Table with Data
-
-1. **Node 1** - Google Docs Batch Update (Create Tables Request)
-   - Operation: Insert Table
-   - Rows: 3
-   - Columns: 2
-   - Location Index: 1
-
-2. **Node 2** - Google Docs Batch Update (Send Request)
-   - Document ID: `your-document-id`
-   - Requests Source: From Input
-
-### Example 3: Bulk Operations from JSON
-
-1. **Node 1** - Google Docs Batch Update (Send Request)
-   - Resource: Send Request
-   - Document ID: `your-document-id`
-   - Requests Source: Define Below
-   - Requests:
-   ```json
-   [
-     {
-       "insertText": {
-         "text": "Title\n",
-         "location": { "index": 1 }
-       }
-     },
-     {
-       "updateTextStyle": {
-         "range": { "startIndex": 1, "endIndex": 6 },
-         "textStyle": { "fontSize": { "magnitude": 24, "unit": "PT" } },
-         "fields": "fontSize"
-       }
-     }
-   ]
-   ```
-
-## Compatibility
-
-- **Minimum n8n version:** 1.0.0
-- **Tested with:** n8n 1.x
-- **Node.js:** 18.x or higher
-
-## Resources
-
-- [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
-- [Google Docs API Reference](https://developers.google.com/docs/api/reference/rest)
-- [Google Docs API Batch Update Guide](https://developers.google.com/docs/api/reference/rest/v1/documents/batchUpdate)
-- [Google Cloud Console](https://console.cloud.google.com/)
-
-## License
-
-[MIT](LICENSE.md)
-
-## Author
-
-Mohammed Adel  
-[mohammedadellma224@gmail.com](mailto:mohammedadellma224@gmail.com)
-
----
+- `403` / permission errors: confirm the connected Google account can edit the document
+- Invalid request body: verify indexes/ranges are valid for the current document state
+- Empty input in `From Input`: ensure upstream nodes output request objects/arrays
 
 ## Development
 
-For contributors who want to modify or extend this node:
-
-### Building the Node
-
 ```bash
 npm run build
-```
-
-### Running in Development Mode
-
-```bash
 npm run dev
-```
-
-This starts n8n with your node loaded and hot reload enabled.
-
-### Linting
-
-```bash
 npm run lint
 npm run lint:fix
 ```
 
-### Project Structure
+## Resources
 
-- `nodes/GoogleDocsBatchUpdate/` - Main node implementation
-  - `resources/` - Resource definitions (create requests and send request)
-  - `objects/` - Reusable helper objects
-  - `enums/` - Type definitions
-- `credentials/` - Google OAuth2 credential definition
-- `icons/` - Node icons
+- n8n community nodes docs: https://docs.n8n.io/integrations/community-nodes/
+- Google Docs API reference: https://developers.google.com/docs/api/reference/rest
+- `documents.batchUpdate`: https://developers.google.com/docs/api/reference/rest/v1/documents/batchUpdate
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Pull requests are welcome.
+
+## License
+
+MIT — see [LICENSE.md](LICENSE.md)
