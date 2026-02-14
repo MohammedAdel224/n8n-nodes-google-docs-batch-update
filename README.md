@@ -202,6 +202,8 @@ Each Create Request operation outputs an item shaped like:
 
 Then use **Send Request → Requests Source = From Input**.
 
+Note: If an input item contains an array of request objects (or `{ "requests": [ ... ] }`), they are included in the same `documents.batchUpdate` HTTP request (one call per execution, or per item if **Run For Each Input Item** is enabled).
+
 Tip: If you want to build multiple requests and send them together, you typically create multiple items (for example by using multiple Create Request nodes and combining them with **Merge**), then Send Request will collect all incoming items and send a single batch.
 
 Important: If you build requests across multiple branches and want to send them all in a single call (and in a specific order), merge them first using a **Merge** node in **Append** mode, then connect the merged output to **Send Request**.
@@ -209,6 +211,8 @@ Important: If you build requests across multiple branches and want to send them 
 #### Option B — Paste raw JSON (“Define Below”)
 
 Use **Send Request → Requests Source = Define Below** and paste an array of Google Docs API request objects.
+
+Note: The array is sent as a single Google Docs API `documents.batchUpdate` HTTP request (one call per execution, or per item if **Run For Each Input Item** is enabled).
 
 Minimal example:
 
@@ -244,6 +248,8 @@ Minimal example:
 Notes:
 - In aggregate mode (`Run For Each Input Item = false`), requests are sent in the same order they are received from input items.
 - In per-item mode (`Run For Each Input Item = true`), each input item is sent independently, preserving request order inside that item.
+- If **Document ID** is set dynamically from item data and differs between input items, aggregate mode sends **one `documents.batchUpdate` call per Document ID** (still preserving item order within each document).
+- When multiple Document IDs are used in aggregate mode, the node returns an object with `documentResponses` (one entry per document).
 - If multiple branches connect directly to **Send Request**, n8n does not guarantee branch synchronization or ordering. Use **Merge (Append)** to combine branches deterministically.
 
 ---

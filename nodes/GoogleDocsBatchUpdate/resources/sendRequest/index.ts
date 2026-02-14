@@ -81,7 +81,7 @@ export const sendRequestDescription: INodeProperties[] = [
 				operation: ['send'],
 			},
 		},
-		description: 'Whether to execute one API call per input item. If disabled, executes one API call with requests collected from all input items in order.',
+		description: 'Whether to execute one API call per input item. If disabled, executes one API call per Document ID with requests collected from all input items in order.',
 	},
 	{
 		displayName: 'Requests',
@@ -111,7 +111,6 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 	send: {
 		_isApiOperation: true,
 		execute: async (context: IExecuteFunctions, itemIndex: number) => {
-			const documentId = context.getNodeParameter('documentId', itemIndex) as string;
 			const requestsSource = context.getNodeParameter('requestsSource', itemIndex) as string;
 			const runForEachInput = context.getNodeParameter('runForEachInput', itemIndex) as boolean;
 
@@ -125,10 +124,12 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 				return asDataObject;
 			};
 
-			const collectRequestsFromItems = (inputItems: Array<{ json: IDataObject }>) => {
+			const collectRequestsFromItems = (inputItems: Array<{ json: unknown }>) => {
 				const collected: IDataObject[] = [];
+				const asRecord = (value: unknown): Record<string, unknown> | null =>
+					typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
 				for (const item of inputItems) {
-					const inputData = item.json;
+					const inputData = item.json as unknown;
 
 					if (Array.isArray(inputData)) {
 						for (const element of inputData) {
@@ -136,14 +137,15 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 							if (unwrapped) collected.push(unwrapped);
 						}
 					}
-					else if (inputData.requests && Array.isArray(inputData.requests)) {
-						for (const element of inputData.requests as IDataObject[]) {
+					else if (asRecord(inputData)?.requests && Array.isArray(asRecord(inputData)?.requests)) {
+						const requestsValue = asRecord(inputData)!.requests as unknown[];
+						for (const element of requestsValue) {
 							const unwrapped = unwrap(element);
 							if (unwrapped) collected.push(unwrapped);
 						}
 					}
-					else if (inputData.request && typeof inputData.request === 'object' && inputData.request !== null) {
-						collected.push(inputData.request as IDataObject);
+					else if (asRecord(inputData)?.request && typeof asRecord(inputData)?.request === 'object' && asRecord(inputData)?.request !== null) {
+						collected.push(asRecord(inputData)!.request as IDataObject);
 					}
 					else if (typeof inputData === 'object' && inputData !== null) {
 						const unwrapped = unwrap(inputData);
@@ -154,63 +156,116 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 				return collected;
 			};
 
-			if (requestsSource === 'input') {
-				const items = context.getInputData();
-				const scopedItems = runForEachInput ? [items[itemIndex]].filter((item): item is { json: IDataObject } => !!item) : items as Array<{ json: IDataObject }>;
-				requests = collectRequestsFromItems(scopedItems);
-				
-				if (requests.length === 0) {
-					throw new NodeOperationError(
-						context.getNode(),
-						'No valid requests found in input data. Input must contain request object(s), arrays of request objects, or {request:{...}} items from Create Request builders.',
-						{ itemIndex }
-					);
-				}
-			} else {
-				// Get requests from JSON parameter
-				const requestsParam = context.getNodeParameter('requests', itemIndex);
-				
-				// Check if it's already parsed (object or array)
+			const parseRequestsFromDefine = (idx: number): IDataObject[] => {
+				const requestsParam = context.getNodeParameter('requests', idx);
+
 				if (typeof requestsParam === 'object' && requestsParam !== null) {
-					requests = Array.isArray(requestsParam) ? requestsParam : [requestsParam];
-				} else if (typeof requestsParam === 'string') {
-					// Parse JSON string
+					return Array.isArray(requestsParam) ? (requestsParam as IDataObject[]) : [requestsParam as IDataObject];
+				}
+				if (typeof requestsParam === 'string') {
 					try {
 						const parsedRequests = JSON.parse(requestsParam);
-						requests = Array.isArray(parsedRequests) ? parsedRequests : [parsedRequests];
+						return Array.isArray(parsedRequests) ? (parsedRequests as IDataObject[]) : [parsedRequests as IDataObject];
 					} catch (error) {
 						throw new NodeOperationError(
 							context.getNode(),
 							`Invalid JSON in requests field: ${(error as Error).message}`,
-							{ itemIndex }
+							{ itemIndex: idx },
 						);
 					}
-				} else {
-					throw new NodeOperationError(
-						context.getNode(),
-						'Requests parameter must be a JSON string, object, or array',
-						{ itemIndex }
-					);
 				}
-			}
-
-			// Make API call to Google Docs
-			const options: IHttpRequestOptions = {
-				method: 'POST' as IHttpRequestMethods,
-				url: `https://docs.googleapis.com/v1/documents/${documentId}:batchUpdate`,
-				body: {
-					requests,
-				},
-				json: true,
+				throw new NodeOperationError(
+					context.getNode(),
+					'Requests parameter must be a JSON string, object, or array',
+					{ itemIndex: idx },
+				);
 			};
 
-			const response = await context.helpers.httpRequestWithAuthentication.call(
-				context,
-				'googleDocsOAuth2Api',
-				options,
-			);
+			const collectRequestsForIndexes = (items: Array<{ json: unknown }>, indexes: number[]) => {
+				const scopedItems = indexes
+					.map(i => items[i])
+					.filter((item): item is { json: unknown } => !!item);
 
-			return response as IDataObject;
+				const collected = collectRequestsFromItems(scopedItems);
+				if (collected.length === 0) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'No valid requests found in input data. Input must contain request object(s), arrays of request objects, or {request:{...}} items from Create Request builders.',
+						{ itemIndex: indexes[0] ?? itemIndex },
+					);
+				}
+				return collected;
+			};
+
+			const resolveDocumentId = (idx: number) => context.getNodeParameter('documentId', idx) as string;
+
+			const allItems = context.getInputData() as Array<{ json: unknown }>;
+
+			// Per-item mode: one HTTP request per item
+			if (runForEachInput) {
+				const documentId = resolveDocumentId(itemIndex);
+				requests = requestsSource === 'input'
+					? collectRequestsForIndexes(allItems, [itemIndex])
+					: parseRequestsFromDefine(itemIndex);
+
+				const options: IHttpRequestOptions = {
+					method: 'POST' as IHttpRequestMethods,
+					url: `https://docs.googleapis.com/v1/documents/${documentId}:batchUpdate`,
+					body: { requests },
+					json: true,
+				};
+
+				const response = await context.helpers.httpRequestWithAuthentication.call(
+					context,
+					'googleDocsOAuth2Api',
+					options,
+				);
+
+				return response as IDataObject;
+			}
+
+			// Aggregate mode: group items by resolved Document ID, send one HTTP request per document
+			const documentIdToIndexes = new Map<string, number[]>();
+			const documentIdOrder: string[] = [];
+			for (let i = 0; i < allItems.length; i++) {
+				const docId = resolveDocumentId(i);
+				if (!documentIdToIndexes.has(docId)) {
+					documentIdToIndexes.set(docId, []);
+					documentIdOrder.push(docId);
+				}
+				documentIdToIndexes.get(docId)!.push(i);
+			}
+
+			const documentResponses: Array<{ documentId: string; response: IDataObject }> = [];
+			for (const docId of documentIdOrder) {
+				const indexes = documentIdToIndexes.get(docId) ?? [];
+				if (indexes.length === 0) continue;
+
+				requests = requestsSource === 'input'
+					? collectRequestsForIndexes(allItems, indexes)
+					: parseRequestsFromDefine(indexes[0]);
+
+				const options: IHttpRequestOptions = {
+					method: 'POST' as IHttpRequestMethods,
+					url: `https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`,
+					body: { requests },
+					json: true,
+				};
+
+				const response = await context.helpers.httpRequestWithAuthentication.call(
+					context,
+					'googleDocsOAuth2Api',
+					options,
+				);
+
+				documentResponses.push({ documentId: docId, response: response as IDataObject });
+			}
+
+			if (documentResponses.length === 1) {
+				return documentResponses[0].response;
+			}
+
+			return { documentResponses } as IDataObject;
 		},
 	} as IApiOperation,
 };
