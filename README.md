@@ -254,6 +254,15 @@ Notes:
 - When multiple Document IDs are used in aggregate mode, the node returns an object with `documentResponses` (one entry per document).
 - If multiple branches connect directly to **Send Request**, n8n does not guarantee branch synchronization or ordering. Use **Merge (Append)** to combine branches deterministically.
 
+Behavior summary:
+- n8n does not automatically “wait for all branches”. If multiple branches connect to **Send Request**, each branch run is handled independently.
+- `Run For Each Input Item = false`: sends one `documents.batchUpdate` call per Document ID (requests are appended in input item order).
+- `Run For Each Input Item = true`: sends one `documents.batchUpdate` call per input item.
+
+Example (dynamic Document ID):
+- 3 input items with Document IDs: `docA`, `docB`, `docA`
+- Aggregate mode sends 2 HTTP calls: one for `docA` (items 1 and 3 combined, in order) and one for `docB` (item 2)
+
 ---
 
 ## Troubleshooting
