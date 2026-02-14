@@ -181,6 +181,17 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 				);
 			};
 
+			const collectRequestsFromDefineIndexes = (indexes: number[]): IDataObject[] => {
+				const collected: IDataObject[] = [];
+				for (const idx of indexes) {
+					const parsed = parseRequestsFromDefine(idx);
+					for (const req of parsed) {
+						collected.push(req);
+					}
+				}
+				return collected;
+			};
+
 			const collectRequestsForIndexes = (items: Array<{ json: unknown }>, indexes: number[]) => {
 				const scopedItems = indexes
 					.map(i => items[i])
@@ -243,7 +254,15 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 
 				requests = requestsSource === 'input'
 					? collectRequestsForIndexes(allItems, indexes)
-					: parseRequestsFromDefine(indexes[0]);
+					: collectRequestsFromDefineIndexes(indexes);
+
+				if (requests.length === 0) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'No valid requests found in requests field. Provide a request object or an array of request objects.',
+						{ itemIndex: indexes[0] ?? itemIndex },
+					);
+				}
 
 				const options: IHttpRequestOptions = {
 					method: 'POST' as IHttpRequestMethods,

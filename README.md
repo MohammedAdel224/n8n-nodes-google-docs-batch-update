@@ -214,6 +214,8 @@ Use **Send Request → Requests Source = Define Below** and paste an array of Go
 
 Note: The array is sent as a single Google Docs API `documents.batchUpdate` HTTP request (one call per execution, or per item if **Run For Each Input Item** is enabled).
 
+If you run **Send Request** with multiple input items while using `Define Below`, aggregate mode (`Run For Each Input Item = false`) concatenates the requests from all items for the same Document ID (in item order) and sends one `batchUpdate` call per document.
+
 Minimal example:
 
 ```json
