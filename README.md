@@ -204,6 +204,8 @@ Then use **Send Request → Requests Source = From Input**.
 
 Tip: If you want to build multiple requests and send them together, you typically create multiple items (for example by using multiple Create Request nodes and combining them with **Merge**), then Send Request will collect all incoming items and send a single batch.
 
+Important: If you build requests across multiple branches and want to send them all in a single call (and in a specific order), merge them first using a **Merge** node in **Append** mode, then connect the merged output to **Send Request**.
+
 #### Option B — Paste raw JSON (“Define Below”)
 
 Use **Send Request → Requests Source = Define Below** and paste an array of Google Docs API request objects.
@@ -242,6 +244,7 @@ Minimal example:
 Notes:
 - In aggregate mode (`Run For Each Input Item = false`), requests are sent in the same order they are received from input items.
 - In per-item mode (`Run For Each Input Item = true`), each input item is sent independently, preserving request order inside that item.
+- If multiple branches connect directly to **Send Request**, n8n does not guarantee branch synchronization or ordering. Use **Merge (Append)** to combine branches deterministically.
 
 ---
 
@@ -249,6 +252,7 @@ Notes:
 
 - `403` / permission errors: the connected Google account must have edit access to the document
 - Invalid request body: verify indices/ranges are correct for the current document state
+- Index/range errors (for example, `updateTextStyle` range is out of bounds): ensure the request that creates the content (like `insertText`) is in the same batch and comes before style updates; use **Merge (Append)** to enforce ordering
 - “No valid requests found…” when using `From Input`:
    - Ensure upstream nodes output request objects, arrays of request objects, or `{ "request": { ... } }`
 
