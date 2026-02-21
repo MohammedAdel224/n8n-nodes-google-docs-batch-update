@@ -1,10 +1,9 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { InsertionLocation, IInsertionLocation } from '../../../objects/insertionLocation';
 import { PersonProperties, IPersonProperties } from '../../../objects/personProperties';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestInsertPerson = {
 	resource: ['createRequest'],
@@ -33,7 +32,7 @@ export const createInsertPersonRequest = wrapInRequest(
 	},
 );
 
-interface IInsertPersonRequest extends IGoogleDocsRequest {
+export interface IInsertPersonRequest extends IBaseGoogleDocsRequest {
 	insertPerson: {
 		personProperties?: IPersonProperties;
 	} & IInsertionLocation;

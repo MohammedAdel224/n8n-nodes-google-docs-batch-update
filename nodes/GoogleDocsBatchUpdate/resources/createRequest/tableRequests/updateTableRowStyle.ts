@@ -1,9 +1,8 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
-import { RequestDefinition } from '../../../utils/types';
+import { wrapInRequest } from '../wrapInRequest';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
 import { ILocation, Location } from '../../../objects/location';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 import { TableRowStyle, ITableRowStyle } from '../../../objects/tableRowStyle';
 
 const showForCreateRequestUpdateTableRowStyle = {
@@ -93,7 +92,7 @@ export const createUpdateTableRowStyleRequest = wrapInRequest(
     }
 );
 
-interface IUpdateTableRowStyleRequest extends IGoogleDocsRequest {
+export interface IUpdateTableRowStyleRequest extends IBaseGoogleDocsRequest {
     updateTableRowStyle: {
         tableStartLocation?: ILocation;
         rowIndices: number[];

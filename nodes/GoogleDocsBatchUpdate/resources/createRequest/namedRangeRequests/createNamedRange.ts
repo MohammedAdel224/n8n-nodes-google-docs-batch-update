@@ -1,9 +1,8 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { IRange, Range } from '../../../objects/range';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestCreateNamedRange = {
     resource: ['createRequest'],
@@ -27,7 +26,7 @@ export const createNamedRangeDescription: INodeProperties[] = [
     ...range.getDescription()
 ];
 
-interface ICreateNamedRangeRequest extends IGoogleDocsRequest {
+export interface ICreateNamedRangeRequest extends IBaseGoogleDocsRequest {
     createNamedRange: {
         name: string;
         range?: IRange;

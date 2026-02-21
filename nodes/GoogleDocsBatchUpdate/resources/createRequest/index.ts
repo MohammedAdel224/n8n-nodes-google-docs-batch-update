@@ -37,7 +37,7 @@ import './tableRequests/updateTableColumnProperties';
 import './tableRequests/updateTableRowStyle';
 import './textRequests/updateTextStyle';
 import { requests } from './registry';
-import { IOperation } from '../../utils/iOperation';
+import { IOperation } from './types';
 
 // Get unique categories from all requests
 const categories = [...new Set(requests.map(req => req.category))].sort();

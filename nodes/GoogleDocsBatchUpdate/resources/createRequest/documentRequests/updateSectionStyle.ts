@@ -1,8 +1,7 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
-import { RequestDefinition } from '../../../utils/types';
+import { wrapInRequest } from '../wrapInRequest';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 import { SectionStyle, ISectionStyle } from '../../../objects/sectionStyle';
 import { Range, IRange } from '../../../objects/range';
 
@@ -77,7 +76,7 @@ export const createUpdateSectionStyleRequest = wrapInRequest(
 	},
 );
 
-interface IUpdateSectionStyleRequest extends IGoogleDocsRequest {
+export interface IUpdateSectionStyleRequest extends IBaseGoogleDocsRequest {
     updateSectionStyle: {
         range?: IRange;
 		sectionStyle?: ISectionStyle;

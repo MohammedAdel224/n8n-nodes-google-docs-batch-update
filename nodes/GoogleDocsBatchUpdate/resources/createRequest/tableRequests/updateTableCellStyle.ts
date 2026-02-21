@@ -1,9 +1,8 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { Cells, ICells } from '../../../objects/cells';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 import { TableCellStyle, ITableCellStyle } from '../../../objects/tableCellStyle';
 
 const showForCreateRequestUpdateTableCellStyle = {
@@ -57,7 +56,7 @@ export const createUpdateTableCellStyleRequest = wrapInRequest(
     }
 );
 
-interface IUpdateTableCellStyleRequest extends IGoogleDocsRequest {
+export interface IUpdateTableCellStyleRequest extends IBaseGoogleDocsRequest {
     updateTableCellStyle: {
         tableCellStyle: ITableCellStyle;
         fields: string;

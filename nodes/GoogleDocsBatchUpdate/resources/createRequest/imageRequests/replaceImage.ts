@@ -1,8 +1,7 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
-import { RequestDefinition } from '../../../utils/types';
+import { wrapInRequest } from '../wrapInRequest';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 // import { imageReplaceMethod } from '../../../enums/imageReplaceMethod';
 
 const showForCreateRequestReplaceImage = {
@@ -67,13 +66,13 @@ export const replaceImageDescription: INodeProperties[] = [
 ];
 
 export const createReplaceImageRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): ReplaceImageRequest => {
+    (input: IExecuteFunctions, itemIndex: number): IReplaceImageRequest => {
         const imageObjectId = input.getNodeParameter('imageObjectId', itemIndex) as string;
         const uri = input.getNodeParameter('uri', itemIndex) as string;
         // const imageReplaceMethod = input.getNodeParameter('imageReplaceMethod', itemIndex) as string;
         const tabId = input.getNodeParameter('additionalFields.tabId', itemIndex, '') as string;
 
-        const replaceImageRequest: ReplaceImageRequest = {
+        const replaceImageRequest: IReplaceImageRequest = {
             replaceImage: {
                 imageObjectId,
                 uri,
@@ -89,7 +88,7 @@ export const createReplaceImageRequest = wrapInRequest(
     }
 );
 
-interface ReplaceImageRequest extends IGoogleDocsRequest {
+export interface IReplaceImageRequest extends IBaseGoogleDocsRequest {
     replaceImage: {
         imageObjectId: string;
         uri: string;

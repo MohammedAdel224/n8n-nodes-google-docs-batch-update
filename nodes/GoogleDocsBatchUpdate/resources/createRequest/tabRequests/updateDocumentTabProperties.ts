@@ -1,8 +1,7 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
-import { RequestDefinition } from '../../../utils/types';
+import { wrapInRequest } from '../wrapInRequest';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 import { TabProperties, ITabProperties } from '../../../objects/tabProperties';
 
 const showForCreateRequestUpdateDocumentTabProperties = {
@@ -51,7 +50,7 @@ export const createUpdateDocumentTabPropertiesRequest = wrapInRequest(
 	},
 );
 
-interface IUpdateDocumentTabPropertiesRequest extends IGoogleDocsRequest {
+export interface IUpdateDocumentTabPropertiesRequest extends IBaseGoogleDocsRequest {
 	updateDocumentTabProperties: {
 		tabProperties?: ITabProperties;
 		fields: string;

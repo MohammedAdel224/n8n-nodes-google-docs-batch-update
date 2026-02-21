@@ -1,8 +1,7 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
-import { RequestDefinition } from '../../../utils/types';
+import { wrapInRequest } from '../wrapInRequest';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 import { DocumentStyle, IDocumentStyle } from '../../../objects/documentStyle';
 
 const showForCreateRequestUpdateDocumentStyle = {
@@ -78,7 +77,7 @@ export const createUpdateDocumentStyleRequest = wrapInRequest(
 );
 
 
-interface IUpdateDocumentStyleRequest extends IGoogleDocsRequest {
+export interface IUpdateDocumentStyleRequest extends IBaseGoogleDocsRequest {
     updateDocumentStyle: {
         documentStyle: IDocumentStyle;
         fields: string;

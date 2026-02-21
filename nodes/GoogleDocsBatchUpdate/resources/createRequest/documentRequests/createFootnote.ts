@@ -1,9 +1,8 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { InsertionLocation, IInsertionLocation } from '../../../objects/insertionLocation';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestCreateFootnote = {
 	resource: ['createRequest'],
@@ -28,7 +27,7 @@ export const createFootnoteRequest = wrapInRequest(
 	},
 );
 
-interface ICreateFootnoteRequest extends IGoogleDocsRequest {
+export interface ICreateFootnoteRequest extends IBaseGoogleDocsRequest {
 	createFootnote: IInsertionLocation;
 }
 

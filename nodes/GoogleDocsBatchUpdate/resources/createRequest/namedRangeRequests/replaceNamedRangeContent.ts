@@ -1,10 +1,9 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { ITabsCriteria, TabsCriteria } from '../../../objects/tabsCriteria';
 import { NamedRangeReference, INamedRangeReference } from '../../../objects/namedRangeReference';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestReplaceNamedRangeContent = {
 	resource: ['createRequest'],
@@ -56,7 +55,7 @@ export const createReplaceNamedRangeContentRequest = wrapInRequest(
 	},
 );
 
-interface IReplaceNamedRangeContentRequest extends IGoogleDocsRequest {
+export interface IReplaceNamedRangeContentRequest extends IBaseGoogleDocsRequest {
 	replaceNamedRangeContent: {
 		text: string;
 	} & INamedRangeReference &

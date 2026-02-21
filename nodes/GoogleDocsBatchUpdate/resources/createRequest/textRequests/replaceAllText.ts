@@ -1,10 +1,9 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { ITabsCriteria, TabsCriteria } from '../../../objects/tabsCriteria';
 import { ISubstringMatchCriteria, SubstringMatchCriteria } from '../../../objects/substringMatchCriteria';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestReplaceAllText = {
     resource: ['createRequest'],
@@ -57,7 +56,7 @@ export const createReplaceAllTextRequest = wrapInRequest(
     }
 );
 
-interface IReplaceAllTextRequest extends IGoogleDocsRequest {
+export interface IReplaceAllTextRequest extends IBaseGoogleDocsRequest {
     replaceAllText: {
         replaceText: string;
         containsText?: ISubstringMatchCriteria;

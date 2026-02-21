@@ -1,9 +1,8 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { ILocation, Location } from '../../../objects/location';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 import { TableColumnProperties, ITableColumnProperties } from '../../../objects/tableColumnProperties';
 
 const showForCreateRequestUpdateTableColumnProperties = {
@@ -93,7 +92,7 @@ export const createUpdateTableColumnPropertiesRequest = wrapInRequest(
     }
 );
 
-interface IUpdateTableColumnPropertiesRequest extends IGoogleDocsRequest {
+export interface IUpdateTableColumnPropertiesRequest extends IBaseGoogleDocsRequest {
     updateTableColumnProperties: {
         tableStartLocation?: ILocation;
         columnIndices: number[];

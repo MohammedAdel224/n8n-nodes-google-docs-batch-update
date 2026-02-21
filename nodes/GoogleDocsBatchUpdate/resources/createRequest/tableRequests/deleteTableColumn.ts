@@ -1,9 +1,8 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { ITableCellLocation, TableCellLocation } from '../../../objects/tableCellLocation';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestDeleteTableColumn = {
     resource: ['createRequest'],
@@ -28,7 +27,7 @@ export const createDeleteTableColumnRequest = wrapInRequest(
     }
 );
 
-interface IDeleteTableColumnRequest extends IGoogleDocsRequest {
+export interface IDeleteTableColumnRequest extends IBaseGoogleDocsRequest {
     deleteTableColumn: {
         tableCellLocation?: ITableCellLocation
     }

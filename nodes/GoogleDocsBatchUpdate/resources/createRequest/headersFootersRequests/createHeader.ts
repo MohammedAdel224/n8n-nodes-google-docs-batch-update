@@ -1,10 +1,9 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { ILocation, Location } from '../../../objects/location';
 import { headerFooterType } from '../../../enums/headerFooterType';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestCreateHeader = {
 	resource: ['createRequest'],
@@ -47,7 +46,7 @@ export const createHeaderRequest = wrapInRequest(
 	},
 );
 
-interface ICreateHeaderRequest extends IGoogleDocsRequest {
+export interface ICreateHeaderRequest extends IBaseGoogleDocsRequest {
 	createHeader: {
 		type: string;
 		sectionBreakLocation?: ILocation;

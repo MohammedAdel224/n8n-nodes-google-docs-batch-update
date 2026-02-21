@@ -1,9 +1,8 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { TableRange, ITableRange } from '../../../objects/tableRange';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestUnmergeTableCells = {
 	resource: ['createRequest'],
@@ -28,7 +27,7 @@ export const createUnmergeTableCellsRequest = wrapInRequest(
 	},
 );
 
-interface IUnmergeTableCellsRequest extends IGoogleDocsRequest {
+export interface IUnmergeTableCellsRequest extends IBaseGoogleDocsRequest {
 	unmergeTableCells: {
 		tableRange: ITableRange;
 	};

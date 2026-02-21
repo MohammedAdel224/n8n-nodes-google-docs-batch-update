@@ -1,8 +1,7 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
-import { RequestDefinition } from '../../../utils/types';
+import { wrapInRequest } from '../wrapInRequest';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestDeleteFooter = {
 	resource: ['createRequest'],
@@ -61,7 +60,7 @@ export const createDeleteFooterRequest = wrapInRequest(
 	},
 );
 
-interface IDeleteFooterRequest extends IGoogleDocsRequest {
+export interface IDeleteFooterRequest extends IBaseGoogleDocsRequest {
 	deleteFooter: {
 		footerId: string;
 		tabId?: string;

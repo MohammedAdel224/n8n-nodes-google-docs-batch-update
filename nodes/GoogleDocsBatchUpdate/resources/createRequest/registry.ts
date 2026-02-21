@@ -1,4 +1,4 @@
-import { RequestDefinition } from '../../utils/types';
+import { RequestDefinition } from './types';
 
 export const requests: RequestDefinition[] = [];
 

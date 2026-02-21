@@ -1,6 +1,6 @@
 import { categoryDescriptions, categoryOperations, categoryMetadata } from './createRequest';
 import { sendRequestDescription, sendRequestOperations, sendRequestMetadata, type IApiOperation } from './sendRequest/index';
-import type { IOperation } from '../utils/iOperation';
+import type { IOperation } from './createRequest/types';
 import type { INodeProperties } from 'n8n-workflow';
 
 const resources: { [key: string]: { [key: string]: IOperation | IApiOperation } } = {};

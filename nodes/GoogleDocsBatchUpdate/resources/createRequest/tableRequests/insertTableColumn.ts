@@ -1,9 +1,8 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { ITableCellLocation, TableCellLocation } from '../../../objects/tableCellLocation';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestInsertTableColumn = {
     resource: ['createRequest'],
@@ -40,7 +39,7 @@ export const createInsertTableColumnRequest = wrapInRequest(
     }
 );
 
-interface IInsertTableColumnRequest extends IGoogleDocsRequest {
+export interface IInsertTableColumnRequest extends IBaseGoogleDocsRequest {
     insertTableColumn: {
         tableCellLocation?: ITableCellLocation;
         insertRight: boolean;

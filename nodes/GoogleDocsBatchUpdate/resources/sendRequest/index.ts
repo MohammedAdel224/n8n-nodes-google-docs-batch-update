@@ -6,7 +6,7 @@ import type {
 	IHttpRequestOptions,
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
-import type { IOperation } from '../../utils/iOperation';
+import type { IOperation } from '../createRequest/types';
 
 export const sendRequestDescription: INodeProperties[] = [
 	{

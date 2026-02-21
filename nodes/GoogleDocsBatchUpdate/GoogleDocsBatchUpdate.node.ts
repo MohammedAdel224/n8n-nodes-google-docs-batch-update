@@ -7,7 +7,7 @@ import type {
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 import { categoryMetadata, categoryDescriptions, getOperation } from './resources';
-import type { IOperation } from './utils/iOperation';
+import type { IOperation } from './resources/createRequest/types';
 
 export class GoogleDocsBatchUpdate implements INodeType {
     description: INodeTypeDescription = {

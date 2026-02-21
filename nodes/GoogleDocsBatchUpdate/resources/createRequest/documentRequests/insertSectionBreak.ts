@@ -1,10 +1,9 @@
 import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
-import { wrapInRequest } from '../../../utils/wrapInRequest';
+import { wrapInRequest } from '../wrapInRequest';
 import { IInsertionLocation, InsertionLocation } from '../../../objects/insertionLocation';
 import { sectionType } from '../../../enums/sectionType';
-import { RequestDefinition } from '../../../utils/types';
+import { RequestDefinition, IBaseGoogleDocsRequest } from '../types';
 import { registerRequest } from '../registry';
-import { IGoogleDocsRequest } from '../IGoogleDocsRequest';
 
 const showForCreateRequestInsertSectionBreak = {
 	resource: ['createRequest'],
@@ -42,7 +41,7 @@ export const createInsertSectionBreakRequest = wrapInRequest(
 	},
 );
 
-interface IInsertSectionBreakRequest extends IGoogleDocsRequest {
+export interface IInsertSectionBreakRequest extends IBaseGoogleDocsRequest {
 	insertSectionBreak: {
 		sectionType: string;
 	} & IInsertionLocation;
