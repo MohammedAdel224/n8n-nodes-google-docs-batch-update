@@ -20,14 +20,14 @@ export class WriteControl extends IGoogleDocsObject {
                 },
                 modes: [
                     {
-                        displayName: 'Target Revision ID',
+                        displayName: 'Target',
                         name: 'targetRevisionId',
                         type: 'string',
                         placeholder: 'Revision ID',
                         hint: 'The target revision ID of the document that the write request is applied to.',
                     },
                     {
-                        displayName: 'Required Revision ID',
+                        displayName: 'Required',
                         name: 'requiredRevisionId',
                         type: 'string',
                         placeholder: 'Revision ID',

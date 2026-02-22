@@ -9,10 +9,7 @@ import { NodeOperationError } from 'n8n-workflow';
 import type { IOperation } from '../createRequest/types';
 import { WriteControl } from '../../objects/writeControle';
 
-const writeControl = new WriteControl({
-	resource: ['sendRequest'],
-	operation: ['send'],
-});
+const writeControl = new WriteControl();
 
 export const sendRequestDescription: INodeProperties[] = [
 	{
