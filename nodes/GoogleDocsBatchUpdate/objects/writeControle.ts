@@ -14,7 +14,6 @@ export class WriteControl extends IGoogleDocsObject {
                 name: 'writeControl',
                 type: 'resourceLocator',
                 default: { mode: 'targetRevisionId', value: '' },
-                required: true,
                 displayOptions: {
                     show: show,
                 },
@@ -40,14 +39,14 @@ export class WriteControl extends IGoogleDocsObject {
     }
 
     public getObject(input: IExecuteFunctions, itemIndex: number, path: string = ''): IWriteControl | undefined {
-        const propertyName = path || 'writeControl';
-        const control = input.getNodeParameter(propertyName, itemIndex, {}) as { mode: string, value: string };
+        const propertyPath = path ? `${path}.writeControl` : 'writeControl';
+        const control = input.getNodeParameter(propertyPath, itemIndex, {}) as { mode?: string; value?: string };
 
         const writeControl: IWriteControl = {};
 
-        if (control.mode === 'targetRevisionId') {
+        if (control.mode === 'targetRevisionId' && control.value) {
             writeControl.targetRevisionId = control.value;
-        } else if (control.mode === 'requiredRevisionId') {
+        } else if (control.mode === 'requiredRevisionId' && control.value) {
             writeControl.requiredRevisionId = control.value;
         }
 
