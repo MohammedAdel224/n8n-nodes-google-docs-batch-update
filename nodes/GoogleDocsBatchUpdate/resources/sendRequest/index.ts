@@ -7,6 +7,12 @@ import type {
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 import type { IOperation } from '../createRequest/types';
+import { WriteControl } from '../../objects/writeControle';
+
+const writeControl = new WriteControl({
+	resource: ['sendRequest'],
+	operation: ['send'],
+});
 
 export const sendRequestDescription: INodeProperties[] = [
 	{
@@ -98,6 +104,22 @@ export const sendRequestDescription: INodeProperties[] = [
 		},
 		description: 'JSON array of request objects to send to Google Docs API',
 		placeholder: '[{"insertText": {"text": "Hello", "location": {"index": 1}}}]',
+	},
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
+		default: {},
+		displayOptions: {
+			show: {
+				resource: ['sendRequest'],
+				operation: ['send'],
+			},
+		},
+		options: [
+			...writeControl.getDescription(),
+		],
 	},
 ];
 
@@ -219,10 +241,12 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 					? collectRequestsForIndexes(allItems, [itemIndex])
 					: parseRequestsFromDefine(itemIndex);
 
+				const writeControlObj = writeControl.getObject(context, itemIndex, 'options');
+
 				const options: IHttpRequestOptions = {
 					method: 'POST' as IHttpRequestMethods,
 					url: `https://docs.googleapis.com/v1/documents/${documentId}:batchUpdate`,
-					body: { requests },
+					body: { requests, writeControl: writeControlObj },
 					json: true,
 				};
 
@@ -264,10 +288,12 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 					);
 				}
 
+				const writeControlObj = writeControl.getObject(context, indexes[0] ?? itemIndex, 'options');
+
 				const options: IHttpRequestOptions = {
 					method: 'POST' as IHttpRequestMethods,
 					url: `https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`,
-					body: { requests },
+					body: { requests, writeControl: writeControlObj },
 					json: true,
 				};
 
