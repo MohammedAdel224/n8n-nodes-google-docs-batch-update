@@ -254,6 +254,12 @@ Notes:
 - When multiple Document IDs are used in aggregate mode, the node returns an object with `documentResponses` (one entry per document).
 - If multiple branches connect directly to **Send Request**, n8n does not guarantee branch synchronization or ordering. Use **Merge (Append)** to combine branches deterministically.
 
+Write control (optional):
+- **Options → Write Control** lets you set Google Docs API `writeControl` to help avoid writing to the wrong document revision.
+   - **Target revision ID**: applies the write against a specific target revision.
+   - **Required revision ID**: the write must be applied to this revision (otherwise the API rejects it).
+- In aggregate mode, one request is sent per Document ID, so **Write Control is taken from the first item for that document**.
+
 Behavior summary:
 - n8n does not automatically “wait for all branches”. If multiple branches connect to **Send Request**, each branch run is handled independently.
 - `Run For Each Input Item = false`: sends one `documents.batchUpdate` call per Document ID (requests are appended in input item order).
