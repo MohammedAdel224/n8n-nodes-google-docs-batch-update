@@ -126,12 +126,21 @@ export interface IApiOperation {
 	execute: (context: IExecuteFunctions, itemIndex: number) => Promise<IDataObject>;
 }
 
+// Map to track latest revision IDs for documents during execution
+const documentRevisions = new Map<string, string>();
+
 export const sendRequestOperations: { [key: string]: IOperation | IApiOperation } = {
 	send: {
 		_isApiOperation: true,
 		execute: async (context: IExecuteFunctions, itemIndex: number) => {
 			const requestsSource = context.getNodeParameter('requestsSource', itemIndex) as string;
 			const runForEachInput = context.getNodeParameter('runForEachInput', itemIndex) as boolean;
+			const resolveDocumentId = (idx: number) => context.getNodeParameter('documentId', idx) as string;
+
+			// Initialize only on first item execution
+			if (itemIndex === 0) {
+				documentRevisions.clear();
+			}
 
 			let requests: IDataObject[] = [];
 			const unwrap = (obj: unknown): IDataObject | null => {
@@ -227,8 +236,6 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 				return collected;
 			};
 
-			const resolveDocumentId = (idx: number) => context.getNodeParameter('documentId', idx) as string;
-
 			const allItems = context.getInputData() as Array<{ json: unknown }>;
 
 			// Per-item mode: one HTTP request per item
@@ -238,7 +245,12 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 					? collectRequestsForIndexes(allItems, [itemIndex])
 					: parseRequestsFromDefine(itemIndex);
 
-				const writeControlObj = writeControl.getObject(context, itemIndex, 'options');
+				const writeControlObj = writeControl.getObject(context, itemIndex, 'options') as IDataObject;
+
+				// If we have a tracked revision ID for this document, use it
+				if (documentRevisions.has(documentId)) {
+					writeControlObj.requiredRevisionId = documentRevisions.get(documentId);
+				}
 
 				const options: IHttpRequestOptions = {
 					method: 'POST' as IHttpRequestMethods,
@@ -252,6 +264,12 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 					'googleDocsOAuth2Api',
 					options,
 				);
+
+				// Update tracked revision ID if present in response
+				const responseData = response as IDataObject;
+				if (responseData.writeControl && (responseData.writeControl as IDataObject).requiredRevisionId) {
+					documentRevisions.set(documentId, (responseData.writeControl as IDataObject).requiredRevisionId as string);
+				}
 
 				return response as IDataObject;
 			}
