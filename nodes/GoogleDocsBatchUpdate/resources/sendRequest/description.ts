@@ -1,7 +1,10 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { WriteControl } from '../../objects/writeControle';
 
-const writeControl = new WriteControl();
+const writeControl = new WriteControl({
+				resource: ['sendRequest'],
+				operation: ['send'],
+			});
 
 export const sendRequestDescription: INodeProperties[] = [
 	{
@@ -79,20 +82,6 @@ export const sendRequestDescription: INodeProperties[] = [
 		description: 'Whether to execute one API call per input item. If disabled, executes one API call per Document ID with requests collected from all input items in order.',
 	},
 	{
-		displayName: 'Auto Update Revision ID',
-		name: 'autoUpdateRevisionId',
-		type: 'boolean',
-		default: true,
-		displayOptions: {
-			show: {
-				resource: ['sendRequest'],
-				operation: ['send'],
-				runForEachInput: [true],
-			},
-		},
-		description: 'Whether to automatically capture and use the latest revision ID for subsequent requests to the same document. Useful when making multiple sequential updates to the same document.',
-	},
-	{
 		displayName: 'Split Requests',
 		name: 'splitRequests',
 		type: 'boolean',
@@ -101,7 +90,7 @@ export const sendRequestDescription: INodeProperties[] = [
 			show: {
 				resource: ['sendRequest'],
 				operation: ['send'],
-				runForEachInput: [false],
+				runForEachInput: [true],
 			},
 		},
 		description: 'Whether to send each collected request as a separate API call instead of batching them together',
@@ -122,20 +111,19 @@ export const sendRequestDescription: INodeProperties[] = [
 		description: 'JSON array of request objects to send to Google Docs API',
 		placeholder: '[{"insertText": {"text": "Hello", "location": {"index": 1}}}]',
 	},
+	...writeControl.getDescription(),
 	{
-		displayName: 'Options',
-		name: 'options',
-		type: 'collection',
-		placeholder: 'Add Option',
-		default: {},
+		displayName: 'Auto Update Revision ID',
+		name: 'autoUpdateRevisionId',
+		type: 'boolean',
+		default: true,
 		displayOptions: {
 			show: {
 				resource: ['sendRequest'],
 				operation: ['send'],
+				runForEachInput: [true],
 			},
 		},
-		options: [
-			...writeControl.getDescription(),
-		],
+		description: 'Whether to automatically capture and use the latest revision ID for subsequent requests to the same document. Useful when making multiple sequential updates to the same document.',
 	},
 ];
