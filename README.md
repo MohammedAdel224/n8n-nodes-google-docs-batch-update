@@ -202,7 +202,7 @@ Each Create Request operation outputs an item shaped like:
 
 Then use **Send Request → Requests Source = From Input**.
 
-Note: If an input item contains an array of request objects (or `{ "requests": [ ... ] }`), they are included in the same `documents.batchUpdate` HTTP request (one call per execution, or per item if **Run For Each Input Item** is enabled). If **Split Requests** is enabled, each request is sent as a separate API call.
+Note: If an input item contains an array of request objects (or `{ "requests": [ ... ] }`), they are included in the same `documents.batchUpdate` HTTP request (one call per execution, or per item if **Run For Each Input Item** is enabled). In aggregate mode, if **Split Requests** is enabled, each request is sent as a separate API call.
 
 Tip: If you want to build multiple requests and send them together, you typically create multiple items (for example by using multiple Create Request nodes and combining them with **Merge**), then Send Request will collect all incoming items and send a single batch.
 
@@ -212,7 +212,7 @@ Important: If you build requests across multiple branches and want to send them 
 
 Use **Send Request → Requests Source = Define Below** and paste an array of Google Docs API request objects.
 
-Note: The array is sent as a single Google Docs API `documents.batchUpdate` HTTP request (one call per execution, or per item if **Run For Each Input Item** is enabled). If **Split Requests** is enabled, each request is sent as a separate API call.
+Note: The array is sent as a single Google Docs API `documents.batchUpdate` HTTP request (one call per execution, or per item if **Run For Each Input Item** is enabled). In aggregate mode, if **Split Requests** is enabled, each request is sent as a separate API call.
 
 If you run **Send Request** with multiple input items while using `Define Below`, aggregate mode (`Run For Each Input Item = false`) concatenates the requests from all items for the same Document ID (in item order) and sends one `batchUpdate` call per document (or one call per request if **Split Requests** is enabled).
 
@@ -245,7 +245,7 @@ Minimal example:
 5. Choose **Run For Each Input Item**:
    - `false` (default): one API call with requests collected from all input items in order
    - `true`: one API call per input item
-6. (Optional) Enable **Split Requests** to send each collected request as a separate API call instead of batching them together
+6. (Optional) Enable **Split Requests** (aggregate mode) to send each collected request as a separate API call instead of batching them together
 7. (Optional) Configure **Write Control** / **Auto Update Revision ID** (see below)
 8. Execute the workflow
 
@@ -265,7 +265,8 @@ Write control (optional):
 
 Auto update revision (per-item mode):
 - **Auto Update Revision ID** captures the latest revision ID returned by Google Docs and automatically applies it as `writeControl.requiredRevisionId` for subsequent requests to the same Document ID during the same execution.
-- This is most useful when **Run For Each Input Item = true** and you have multiple sequential items targeting the same document (and/or when **Split Requests** is enabled).
+- This is most useful when **Run For Each Input Item = true** and you have multiple sequential items targeting the same document.
+- Note: This option works in conjunction with **Write Control** (the revision ID is read from the API response `writeControl`).
 
 Behavior summary:
 - n8n does not automatically “wait for all branches”. If multiple branches connect to **Send Request**, each branch run is handled independently.
