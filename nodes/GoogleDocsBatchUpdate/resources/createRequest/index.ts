@@ -35,6 +35,7 @@ import './documentRequests/updateSectionStyle';
 import './tableRequests/updateTableCellStyle';
 import './tableRequests/updateTableColumnProperties';
 import './tableRequests/updateTableRowStyle';
+import './textRequests/updateParagraphStyle';
 import './textRequests/updateTextStyle';
 import { requests } from './registry';
 import { IOperation } from './types';
