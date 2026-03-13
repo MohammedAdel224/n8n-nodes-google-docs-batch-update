@@ -54,7 +54,7 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 						? collectRequestsForIndexes(context, allItems, [itemIndex], itemIndex)
 						: parseRequestsFromDefine(context, itemIndex);
 
-				const writeControlObj = writeControl.getObject(context, itemIndex, 'options') as IDataObject;
+				const writeControlObj = writeControl.getObject(context, itemIndex) as IDataObject;
 
 				// If we have a tracked revision ID for this document, use it
 				if (autoUpdateRevisionId && documentRevisions.has(documentId)) {
@@ -122,8 +122,7 @@ export const sendRequestOperations: { [key: string]: IOperation | IApiOperation 
 
 				const writeControlObj = writeControl.getObject(
 					context,
-					indexes[0] ?? itemIndex,
-					'options',
+					indexes[0] ?? itemIndex
 				);
 				if (splitRequests) {
 					const individualResponses = [];
