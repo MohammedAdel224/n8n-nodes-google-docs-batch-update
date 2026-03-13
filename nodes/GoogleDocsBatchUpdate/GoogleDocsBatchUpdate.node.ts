@@ -35,6 +35,18 @@ export class GoogleDocsBatchUpdate implements INodeType {
                 },
             },
         ],
+        hints: [
+            {
+                message:
+                    'Migration: This operation moved to <b>Create Text Request → Update Paragraph Style</b>. ' +
+                    'This Document location is kept for backwards compatibility and will be removed in a future major release.',
+                type: 'warning',
+                location: 'ndv',
+                whenToDisplay: 'always',
+                displayCondition:
+                    '={{ $parameter["resource"] === "createDocumentRequest" && $parameter["operation"] === "updateParagraphStyle" }}',
+            },
+        ],
         properties: [
             {
                 displayName: 'Resource',
