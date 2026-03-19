@@ -34,31 +34,29 @@ export interface ICreateParagraphBulletsRequest extends IBaseGoogleDocsRequest {
     }
 }
 
-export const createCreateParagraphBulletsRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): ICreateParagraphBulletsRequest => {
-        const range_ = range.getObject(input, itemIndex);
-        const bulletPreset = input.getNodeParameter('bulletPreset', itemIndex, null) as string;
+export const createCreateParagraphBulletsRequest = (input: IExecuteFunctions, itemIndex: number): ICreateParagraphBulletsRequest => {
+    const range_ = range.getObject(input, itemIndex);
+    const bulletPreset = input.getNodeParameter('bulletPreset', itemIndex, null) as string;
 
-        const createParagraphBulletsRequest: ICreateParagraphBulletsRequest = {
-            createParagraphBullets: {
-                range: range_,
-            }
-        };
-
-        if (bulletPreset) {
-            createParagraphBulletsRequest.createParagraphBullets.bulletPreset = bulletPreset;
+    const createParagraphBulletsRequest: ICreateParagraphBulletsRequest = {
+        createParagraphBullets: {
+            range: range_,
         }
+    };
 
-        return createParagraphBulletsRequest;
+    if (bulletPreset) {
+        createParagraphBulletsRequest.createParagraphBullets.bulletPreset = bulletPreset;
     }
-);
+
+    return createParagraphBulletsRequest;
+};
 
 const createParagraphBulletsRequest: RequestDefinition = {
     name: 'Create Paragraph Bullets',
     value: 'createParagraphBullets',
     category: 'Bullets',
     description: createParagraphBulletsDescription,
-    operation: createCreateParagraphBulletsRequest,
+    operation: wrapInRequest(createCreateParagraphBulletsRequest),
 };
 
 registerRequest(createParagraphBulletsRequest);

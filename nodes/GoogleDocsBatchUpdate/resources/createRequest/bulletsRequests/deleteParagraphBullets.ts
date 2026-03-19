@@ -15,17 +15,15 @@ export const deleteParagraphBulletsDescription: INodeProperties[] = [
     ...range.getDescription(),
 ];
 
-export const createDeleteParagraphBulletsRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IDeleteParagraphBulletsRequest => {
-        const range_ = range.getObject(input, itemIndex);
+export const createDeleteParagraphBulletsRequest = (input: IExecuteFunctions, itemIndex: number): IDeleteParagraphBulletsRequest => {
+    const range_ = range.getObject(input, itemIndex);
 
-        return {
-            deleteParagraphBullets: {
-                range: range_,
-            },
-        };
-    }
-);
+    return {
+        deleteParagraphBullets: {
+            range: range_,
+        },
+    };
+};
 
 export interface IDeleteParagraphBulletsRequest extends IBaseGoogleDocsRequest {
     deleteParagraphBullets: {
@@ -38,7 +36,7 @@ const deleteParagraphBulletsRequest: RequestDefinition = {
     value: 'deleteParagraphBullets',
     category: 'Bullets',
     description: deleteParagraphBulletsDescription,
-    operation: createDeleteParagraphBulletsRequest,
+    operation: wrapInRequest(createDeleteParagraphBulletsRequest),
 };
 
 registerRequest(deleteParagraphBulletsRequest);

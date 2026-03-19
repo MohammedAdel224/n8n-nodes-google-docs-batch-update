@@ -28,19 +28,17 @@ export const deleteNamedRangeDescription: INodeProperties[] = [
     }
 ];
 
-export const createDeleteNamedRangeRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IDeleteNamedRangeRequest => {
-        const reference = namedRangeReference.getObject(input, itemIndex) as INamedRangeReference;
-        const tabsCriteria_ = tabsCriteria.getObject(input, itemIndex, 'additionalFields');
+export const createDeleteNamedRangeRequest = (input: IExecuteFunctions, itemIndex: number): IDeleteNamedRangeRequest => {
+    const reference = namedRangeReference.getObject(input, itemIndex) as INamedRangeReference;
+    const tabsCriteria_ = tabsCriteria.getObject(input, itemIndex, 'additionalFields');
 
-        return {
-            deleteNamedRange: {
-                ...reference,
-                ...tabsCriteria_,
-            },
-        };
-    }
-);
+    return {
+        deleteNamedRange: {
+            ...reference,
+            ...tabsCriteria_,
+        },
+    };
+};
 
 export interface IDeleteNamedRangeRequest extends IBaseGoogleDocsRequest {
     deleteNamedRange: INamedRangeReference & ITabsCriteria;
@@ -51,7 +49,7 @@ const deleteNamedRangeRequest: RequestDefinition = {
     value: 'deleteNamedRange',
     category: 'Named Ranges',
     description: deleteNamedRangeDescription,
-    operation: createDeleteNamedRangeRequest,
+    operation: wrapInRequest(createDeleteNamedRangeRequest),
 };
 
 registerRequest(deleteNamedRangeRequest);

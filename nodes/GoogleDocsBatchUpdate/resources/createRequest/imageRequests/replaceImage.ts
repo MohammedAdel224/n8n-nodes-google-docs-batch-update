@@ -65,28 +65,26 @@ export const replaceImageDescription: INodeProperties[] = [
     },
 ];
 
-export const createReplaceImageRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IReplaceImageRequest => {
-        const imageObjectId = input.getNodeParameter('imageObjectId', itemIndex) as string;
-        const uri = input.getNodeParameter('uri', itemIndex) as string;
-        // const imageReplaceMethod = input.getNodeParameter('imageReplaceMethod', itemIndex) as string;
-        const tabId = input.getNodeParameter('additionalFields.tabId', itemIndex, '') as string;
+export const createReplaceImageRequest = (input: IExecuteFunctions, itemIndex: number): IReplaceImageRequest => {
+    const imageObjectId = input.getNodeParameter('imageObjectId', itemIndex) as string;
+    const uri = input.getNodeParameter('uri', itemIndex) as string;
+    // const imageReplaceMethod = input.getNodeParameter('imageReplaceMethod', itemIndex) as string;
+    const tabId = input.getNodeParameter('additionalFields.tabId', itemIndex, '') as string;
 
-        const replaceImageRequest: IReplaceImageRequest = {
-            replaceImage: {
-                imageObjectId,
-                uri,
-                // imageReplaceMethod,
-            }
-        };
-
-        if (tabId) {
-            replaceImageRequest.replaceImage.tabId = tabId;
+    const replaceImageRequest: IReplaceImageRequest = {
+        replaceImage: {
+            imageObjectId,
+            uri,
+            // imageReplaceMethod,
         }
+    };
 
-        return replaceImageRequest;
+    if (tabId) {
+        replaceImageRequest.replaceImage.tabId = tabId;
     }
-);
+
+    return replaceImageRequest;
+};
 
 export interface IReplaceImageRequest extends IBaseGoogleDocsRequest {
     replaceImage: {
@@ -102,7 +100,7 @@ const replaceImageRequest: RequestDefinition = {
     value: 'replaceImage',
     category: 'Images',
     description: replaceImageDescription,
-    operation: createReplaceImageRequest,
+    operation: wrapInRequest(createReplaceImageRequest),
 };
 
 registerRequest(replaceImageRequest);

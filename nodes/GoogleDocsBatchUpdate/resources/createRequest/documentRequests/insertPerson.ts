@@ -18,19 +18,17 @@ export const insertPersonDescription: INodeProperties[] = [
 	...insertionLocation.getDescription(),
 ];
 
-export const createInsertPersonRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IInsertPersonRequest => {
-		const location = insertionLocation.getObject(input, itemIndex);
-		const properties = personProperties.getObject(input, itemIndex);
+export const createInsertPersonRequest = (input: IExecuteFunctions, itemIndex: number): IInsertPersonRequest => {
+	const location = insertionLocation.getObject(input, itemIndex);
+	const properties = personProperties.getObject(input, itemIndex);
 
-		return {
-			insertPerson: {
-				personProperties: properties,
-				...location,
-			},
-		};
-	},
-);
+	return {
+		insertPerson: {
+			personProperties: properties,
+			...location,
+		},
+	};
+};
 
 export interface IInsertPersonRequest extends IBaseGoogleDocsRequest {
 	insertPerson: {
@@ -43,7 +41,7 @@ const insertPersonRequest: RequestDefinition = {
 	value: 'insertPerson',
 	category: 'Document',
 	description: insertPersonDescription,
-	operation: createInsertPersonRequest,
+	operation: wrapInRequest(createInsertPersonRequest),
 };
 
 registerRequest(insertPersonRequest);

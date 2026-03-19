@@ -15,15 +15,13 @@ export const insertPageBreakDescription: INodeProperties[] = [
     ...insertionLocation.getDescription()
 ];
 
-export const createInsertPageBreakRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IInsertPageBreakRequest => {
-        const location = insertionLocation.getObject(input, itemIndex);
+export const createInsertPageBreakRequest = (input: IExecuteFunctions, itemIndex: number): IInsertPageBreakRequest => {
+    const location = insertionLocation.getObject(input, itemIndex);
 
-        return {
-            insertPageBreak: location
-        };
-    }
-);
+    return {
+        insertPageBreak: location
+    };
+};
 
 export interface IInsertPageBreakRequest extends IBaseGoogleDocsRequest {
     insertPageBreak?: {} & IInsertionLocation;
@@ -34,7 +32,7 @@ const insertPageBreakRequest: RequestDefinition = {
     value: 'insertPageBreak',
     category: 'Document',
     description: insertPageBreakDescription,
-    operation: createInsertPageBreakRequest,
+    operation: wrapInRequest(createInsertPageBreakRequest),
 };
 
 registerRequest(insertPageBreakRequest);

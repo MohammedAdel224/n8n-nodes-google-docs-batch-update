@@ -5,6 +5,7 @@ import {
     createUpdateParagraphStyleRequest,
     updateParagraphStyleDescription,
 } from '../textRequests/updateParagraphStyle';
+import { wrapInRequest } from '../wrapInRequest';
 
 export { createUpdateParagraphStyleRequest, updateParagraphStyleDescription };
 export type { IUpdateParagraphStyleRequest } from '../textRequests/updateParagraphStyle';
@@ -34,7 +35,7 @@ const updateParagraphStyleRequest: RequestDefinition = {
     value: 'updateParagraphStyle',
     category: 'Document',
     description: updateParagraphStyleLegacyDescription,
-    operation: createUpdateParagraphStyleRequest,
+    operation: wrapInRequest(createUpdateParagraphStyleRequest),
 };
 
 registerRequest(updateParagraphStyleRequest);

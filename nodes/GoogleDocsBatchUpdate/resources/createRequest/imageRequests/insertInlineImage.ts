@@ -29,26 +29,24 @@ export const insertInlineImageDescription: INodeProperties[] = [
     ...insertionLocation.getDescription()
 ];
 
-export const createInsertInlineImageRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IInsertInlineImageRequest => {
-        const uri = input.getNodeParameter('uri', itemIndex) as string;
-        const location = insertionLocation.getObject(input, itemIndex);
-        const objectSize = size.getObject(input, itemIndex, '');
+export const createInsertInlineImageRequest = (input: IExecuteFunctions, itemIndex: number): IInsertInlineImageRequest => {
+    const uri = input.getNodeParameter('uri', itemIndex) as string;
+    const location = insertionLocation.getObject(input, itemIndex);
+    const objectSize = size.getObject(input, itemIndex, '');
 
-        const insertInlineImageRequest: IInsertInlineImageRequest = {
-            insertInlineImage: {
-                uri,
-                ...location
-            }
-        };
-
-        if (objectSize) {
-            insertInlineImageRequest.insertInlineImage.objectSize = objectSize;
+    const insertInlineImageRequest: IInsertInlineImageRequest = {
+        insertInlineImage: {
+            uri,
+            ...location
         }
+    };
 
-        return insertInlineImageRequest;
+    if (objectSize) {
+        insertInlineImageRequest.insertInlineImage.objectSize = objectSize;
     }
-);
+
+    return insertInlineImageRequest;
+};
 
 export interface IInsertInlineImageRequest extends IBaseGoogleDocsRequest {
     insertInlineImage: {
@@ -62,7 +60,7 @@ const insertInlineImageRequest: RequestDefinition = {
     value: 'insertInlineImage',
     category: 'Images',
     description: insertInlineImageDescription,
-    operation: createInsertInlineImageRequest,
+    operation: wrapInRequest(createInsertInlineImageRequest),
 };
 
 registerRequest(insertInlineImageRequest);

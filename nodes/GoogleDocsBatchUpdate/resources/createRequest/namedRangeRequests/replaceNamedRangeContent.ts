@@ -39,21 +39,19 @@ export const replaceNamedRangeContentDescription: INodeProperties[] = [
 	},
 ];
 
-export const createReplaceNamedRangeContentRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IReplaceNamedRangeContentRequest => {
-		const text = input.getNodeParameter('text', itemIndex) as string;
-		const reference = namedRangeReference.getObject(input, itemIndex) as INamedRangeReference;
-		const tabsCriteria_ = tabsCriteria.getObject(input, itemIndex, 'additionalFields');
+export const createReplaceNamedRangeContentRequest = (input: IExecuteFunctions, itemIndex: number): IReplaceNamedRangeContentRequest => {
+	const text = input.getNodeParameter('text', itemIndex) as string;
+	const reference = namedRangeReference.getObject(input, itemIndex) as INamedRangeReference;
+	const tabsCriteria_ = tabsCriteria.getObject(input, itemIndex, 'additionalFields');
 
-		return {
-			replaceNamedRangeContent: {
-				text,
-				...reference,
-				...tabsCriteria_,
-			},
-		};
-	},
-);
+	return {
+		replaceNamedRangeContent: {
+			text,
+			...reference,
+			...tabsCriteria_,
+		},
+	};
+};
 
 export interface IReplaceNamedRangeContentRequest extends IBaseGoogleDocsRequest {
 	replaceNamedRangeContent: {
@@ -67,7 +65,7 @@ const replaceNamedRangeContentRequest: RequestDefinition = {
 	value: 'replaceNamedRangeContent',
 	category: 'Named Ranges',
 	description: replaceNamedRangeContentDescription,
-	operation: createReplaceNamedRangeContentRequest,
+	operation: wrapInRequest(createReplaceNamedRangeContentRequest),
 };
 
 registerRequest(replaceNamedRangeContentRequest);

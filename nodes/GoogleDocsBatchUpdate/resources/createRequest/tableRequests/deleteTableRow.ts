@@ -15,17 +15,15 @@ export const deleteTableRowDescription: INodeProperties[] = [
     ...tableCellLocation.getDescription().filter(prop => prop.name !== 'columnIndex'),
 ];
 
-export const createDeleteTableRowRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IDeleteTableRowRequest => {
-        const location = tableCellLocation.getObject(input, itemIndex, '');
+export const createDeleteTableRowRequest = (input: IExecuteFunctions, itemIndex: number): IDeleteTableRowRequest => {
+    const location = tableCellLocation.getObject(input, itemIndex, '');
 
-        return {
-            deleteTableRow: {
-                tableCellLocation: location,
-            }
-        };
-    }
-);
+    return {
+        deleteTableRow: {
+            tableCellLocation: location,
+        }
+    };
+};
 
 export interface IDeleteTableRowRequest extends IBaseGoogleDocsRequest {
     deleteTableRow: {
@@ -38,7 +36,7 @@ const deleteTableRowRequest: RequestDefinition = {
     value: 'deleteTableRow',
     category: 'Tables',
     description: deleteTableRowDescription,
-    operation: createDeleteTableRowRequest,
+    operation: wrapInRequest(createDeleteTableRowRequest),
 };
 
 registerRequest(deleteTableRowRequest);

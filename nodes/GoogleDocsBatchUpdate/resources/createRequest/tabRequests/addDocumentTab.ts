@@ -15,17 +15,15 @@ export const addDocumentTabDescription: INodeProperties[] = [
 	...tabProperties.getDescription(),
 ];
 
-export const createAddDocumentTabRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IAddDocumentTabRequest => {
-		const properties = tabProperties.getObject(input, itemIndex);
+export const createAddDocumentTabRequest = (input: IExecuteFunctions, itemIndex: number): IAddDocumentTabRequest => {
+	const properties = tabProperties.getObject(input, itemIndex);
 
-		return {
-			addDocumentTab: {
-				tabProperties: properties,
-			},
-		};
-	},
-);
+	return {
+		addDocumentTab: {
+			tabProperties: properties,
+		},
+	};
+};
 
 export interface IAddDocumentTabRequest extends IBaseGoogleDocsRequest {
 	addDocumentTab: {
@@ -38,7 +36,7 @@ const addDocumentTabRequest: RequestDefinition = {
 	value: 'addDocumentTab',
 	category: 'Tabs',
 	description: addDocumentTabDescription,
-	operation: createAddDocumentTabRequest,
+	operation: wrapInRequest(createAddDocumentTabRequest),
 };
 
 registerRequest(addDocumentTabRequest);

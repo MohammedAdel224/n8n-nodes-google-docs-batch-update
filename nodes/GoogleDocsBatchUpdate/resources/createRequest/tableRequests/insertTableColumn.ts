@@ -25,19 +25,17 @@ export const insertTableColumnDescription: INodeProperties[] = [
     },
 ];
 
-export const createInsertTableColumnRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IInsertTableColumnRequest => {
-        const location = tableCellLocation.getObject(input, itemIndex, '');
-        const insertRight = input.getNodeParameter('insertRight', itemIndex, true) as boolean;
+export const createInsertTableColumnRequest = (input: IExecuteFunctions, itemIndex: number): IInsertTableColumnRequest => {
+    const location = tableCellLocation.getObject(input, itemIndex, '');
+    const insertRight = input.getNodeParameter('insertRight', itemIndex, true) as boolean;
 
-        return {
-            insertTableColumn: {
-                tableCellLocation: location,
-                insertRight,
-            }
-        };
-    }
-);
+    return {
+        insertTableColumn: {
+            tableCellLocation: location,
+            insertRight,
+        }
+    };
+};
 
 export interface IInsertTableColumnRequest extends IBaseGoogleDocsRequest {
     insertTableColumn: {
@@ -51,7 +49,7 @@ const insertTableColumnRequest: RequestDefinition = {
     value: 'insertTableColumn',
     category: 'Tables',
     description: insertTableColumnDescription,
-    operation: createInsertTableColumnRequest,
+    operation: wrapInRequest(createInsertTableColumnRequest),
 };
 
 registerRequest(insertTableColumnRequest);

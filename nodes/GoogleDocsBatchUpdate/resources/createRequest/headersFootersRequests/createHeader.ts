@@ -27,24 +27,22 @@ export const createHeaderDescription: INodeProperties[] = [
 	...location.getDescription(),
 ];
 
-export const createHeaderRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): ICreateHeaderRequest => {
-		const type = input.getNodeParameter('type', itemIndex) as string;
-		const sectionBreakLocation = location.getObject(input, itemIndex);
+export const createHeaderRequest = (input: IExecuteFunctions, itemIndex: number): ICreateHeaderRequest => {
+	const type = input.getNodeParameter('type', itemIndex) as string;
+	const sectionBreakLocation = location.getObject(input, itemIndex);
 
-		const request: ICreateHeaderRequest = {
-			createHeader: {
-				type,
-			},
-		};
+	const request: ICreateHeaderRequest = {
+		createHeader: {
+			type,
+		},
+	};
 
-		if (sectionBreakLocation) {
-			request.createHeader.sectionBreakLocation = sectionBreakLocation;
-		}
+	if (sectionBreakLocation) {
+		request.createHeader.sectionBreakLocation = sectionBreakLocation;
+	}
 
-		return request;
-	},
-);
+	return request;
+};
 
 export interface ICreateHeaderRequest extends IBaseGoogleDocsRequest {
 	createHeader: {
@@ -58,7 +56,7 @@ const request: RequestDefinition = {
 	value: 'createHeader',
 	category: 'Headers & Footers',
 	description: createHeaderDescription,
-	operation: createHeaderRequest,
+	operation: wrapInRequest(createHeaderRequest),
 };
 
 registerRequest(request);

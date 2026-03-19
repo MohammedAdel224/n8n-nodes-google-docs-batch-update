@@ -40,21 +40,19 @@ export const updateTableCellStyleDescription: INodeProperties[] = [
     },
 ];
 
-export const createUpdateTableCellStyleRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IUpdateTableCellStyleRequest => {
-        const cellsObj = cells.getObject(input, itemIndex);
-        const style = tableCellStyle.getObject(input, itemIndex, 'style');
-        const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
+export const createUpdateTableCellStyleRequest = (input: IExecuteFunctions, itemIndex: number): IUpdateTableCellStyleRequest => {
+    const cellsObj = cells.getObject(input, itemIndex);
+    const style = tableCellStyle.getObject(input, itemIndex, 'style');
+    const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
 
-        return {
-            updateTableCellStyle: {
-                ...cellsObj,
-                tableCellStyle: style,
-                fields: fields.join(','),
-            }
-        };
-    }
-);
+    return {
+        updateTableCellStyle: {
+            ...cellsObj,
+            tableCellStyle: style,
+            fields: fields.join(','),
+        }
+    };
+};
 
 export interface IUpdateTableCellStyleRequest extends IBaseGoogleDocsRequest {
     updateTableCellStyle: {
@@ -68,7 +66,7 @@ const updateTableCellStyleRequest: RequestDefinition = {
     value: 'updateTableCellStyle',
     category: 'Tables',
     description: updateTableCellStyleDescription,
-    operation: createUpdateTableCellStyleRequest,
+    operation: wrapInRequest(createUpdateTableCellStyleRequest),
 };
 
 registerRequest(updateTableCellStyleRequest);

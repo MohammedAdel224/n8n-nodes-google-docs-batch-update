@@ -55,26 +55,24 @@ export const updateDocumentStyleDescription: INodeProperties[] = [
     },
 ];
 
-export const createUpdateDocumentStyleRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IUpdateDocumentStyleRequest => {
-        const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
-        const style: IDocumentStyle = documentStyle.getObject(input, itemIndex, 'documentStyle');
-        const tabId = input.getNodeParameter('additionalFields.tabId', itemIndex, '') as string;
+export const createUpdateDocumentStyleRequest = (input: IExecuteFunctions, itemIndex: number): IUpdateDocumentStyleRequest => {
+    const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
+    const style: IDocumentStyle = documentStyle.getObject(input, itemIndex, 'documentStyle');
+    const tabId = input.getNodeParameter('additionalFields.tabId', itemIndex, '') as string;
 
-        const updateDocumentStyleRequest: IUpdateDocumentStyleRequest = {
-            updateDocumentStyle: {
-                documentStyle: style,
-                fields: fields.join(','),
-            },
-        };
+    const updateDocumentStyleRequest: IUpdateDocumentStyleRequest = {
+        updateDocumentStyle: {
+            documentStyle: style,
+            fields: fields.join(','),
+        },
+    };
 
-        if (tabId) {
-            updateDocumentStyleRequest.updateDocumentStyle.tabId = tabId;
-        }
-
-        return updateDocumentStyleRequest;
+    if (tabId) {
+        updateDocumentStyleRequest.updateDocumentStyle.tabId = tabId;
     }
-);
+
+    return updateDocumentStyleRequest;
+};
 
 
 export interface IUpdateDocumentStyleRequest extends IBaseGoogleDocsRequest {
@@ -90,7 +88,7 @@ const updateDocumentStyleRequest: RequestDefinition = {
     value: 'updateDocumentStyle',
     category: 'Document',
     description: updateDocumentStyleDescription,
-    operation: createUpdateDocumentStyleRequest,
+    operation: wrapInRequest(createUpdateDocumentStyleRequest),
 };
 
 registerRequest(updateDocumentStyleRequest);

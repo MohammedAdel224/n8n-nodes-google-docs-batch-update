@@ -40,22 +40,20 @@ export const updateTextStyleDescription: INodeProperties[] = [
     },
 ];
 
-export const createUpdateTextStyleRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IUpdateTextStyleRequest => {
-        const range_ = range.getObject(input, itemIndex);
+export const createUpdateTextStyleRequest = (input: IExecuteFunctions, itemIndex: number): IUpdateTextStyleRequest => {
+    const range_ = range.getObject(input, itemIndex);
 
-        const style = textStyle.getObject(input, itemIndex, 'style');
-        const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
+    const style = textStyle.getObject(input, itemIndex, 'style');
+    const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
 
-        return {
-            updateTextStyle: {
-                range: range_,
-                textStyle: style,
-                fields: fields.join(','),
-            },
-        };
-    }
-);
+    return {
+        updateTextStyle: {
+            range: range_,
+            textStyle: style,
+            fields: fields.join(','),
+        },
+    };
+};
 
 export interface IUpdateTextStyleRequest extends IBaseGoogleDocsRequest {
     updateTextStyle: {
@@ -70,7 +68,7 @@ const updateTextStyleRequest: RequestDefinition = {
     value: 'updateTextStyle',
     category: 'Text',
     description: updateTextStyleDescription,
-    operation: createUpdateTextStyleRequest,
+    operation: wrapInRequest(createUpdateTextStyleRequest),
 };
 
 registerRequest(updateTextStyleRequest);

@@ -40,21 +40,19 @@ export const replaceAllTextDescription: INodeProperties[] = [
     }
 ];
 
-export const createReplaceAllTextRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IReplaceAllTextRequest => {
-        const replaceText = input.getNodeParameter('replaceText', itemIndex) as string;
-        const tabs = tabsCriteria.getObject(input, itemIndex, 'additionalFields');
-        const substringMatchCriteria = containsText.getObject(input, itemIndex);
+export const createReplaceAllTextRequest = (input: IExecuteFunctions, itemIndex: number): IReplaceAllTextRequest => {
+    const replaceText = input.getNodeParameter('replaceText', itemIndex) as string;
+    const tabs = tabsCriteria.getObject(input, itemIndex, 'additionalFields');
+    const substringMatchCriteria = containsText.getObject(input, itemIndex);
 
-        return {
-            replaceAllText: {
-                replaceText,
-                ...tabs,
-                containsText: substringMatchCriteria,
-            }
-        };
-    }
-);
+    return {
+        replaceAllText: {
+            replaceText,
+            ...tabs,
+            containsText: substringMatchCriteria,
+        }
+    };
+};
 
 export interface IReplaceAllTextRequest extends IBaseGoogleDocsRequest {
     replaceAllText: {
@@ -68,7 +66,7 @@ const replaceAllTextRequest: RequestDefinition = {
     value: 'replaceAllText',
     category: 'Text',
     description: replaceAllTextDescription,
-    operation: createReplaceAllTextRequest,
+    operation: wrapInRequest(createReplaceAllTextRequest),
 };
 
 registerRequest(replaceAllTextRequest);

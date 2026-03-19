@@ -15,17 +15,15 @@ export const deleteContentRangeDescription: INodeProperties[] = [
     ...range.getDescription(),
 ];
 
-export const createDeleteContentRangeRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IDeleteContentRangeRequest => {
-        const range_ = range.getObject(input, itemIndex);
+export const createDeleteContentRangeRequest = (input: IExecuteFunctions, itemIndex: number): IDeleteContentRangeRequest => {
+    const range_ = range.getObject(input, itemIndex);
 
-        return {
-            deleteContentRange: {
-                range: range_,
-            },
-        };
-    }
-);
+    return {
+        deleteContentRange: {
+            range: range_,
+        },
+    };
+};
 
 export interface IDeleteContentRangeRequest extends IBaseGoogleDocsRequest {
     deleteContentRange: {
@@ -38,7 +36,7 @@ const deleteContentRangeRequest: RequestDefinition = {
     value: 'deleteContentRange',
     category: 'Document',
     description: deleteContentRangeDescription,
-    operation: createDeleteContentRangeRequest,
+    operation: wrapInRequest(createDeleteContentRangeRequest),
 };
 
 registerRequest(deleteContentRangeRequest);

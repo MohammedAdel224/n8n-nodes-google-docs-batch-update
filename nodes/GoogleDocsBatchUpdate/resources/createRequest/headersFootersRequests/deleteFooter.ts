@@ -41,24 +41,22 @@ export const deleteFooterDescription: INodeProperties[] = [
 	},
 ];
 
-export const createDeleteFooterRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IDeleteFooterRequest => {
-		const footerId = input.getNodeParameter('footerId', itemIndex) as string;
-		const additionalFields = input.getNodeParameter('additionalFields', itemIndex, {}) as { tabId?: string };
+export const createDeleteFooterRequest = (input: IExecuteFunctions, itemIndex: number): IDeleteFooterRequest => {
+	const footerId = input.getNodeParameter('footerId', itemIndex) as string;
+	const additionalFields = input.getNodeParameter('additionalFields', itemIndex, {}) as { tabId?: string };
 
-		const deleteFooterRequest: IDeleteFooterRequest = {
-			deleteFooter: {
-				footerId,
-			},
-		};
+	const deleteFooterRequest: IDeleteFooterRequest = {
+		deleteFooter: {
+			footerId,
+		},
+	};
 
-		if (additionalFields.tabId) {
-			deleteFooterRequest.deleteFooter.tabId = additionalFields.tabId;
-		}
+	if (additionalFields.tabId) {
+		deleteFooterRequest.deleteFooter.tabId = additionalFields.tabId;
+	}
 
-		return deleteFooterRequest;
-	},
-);
+	return deleteFooterRequest;
+};
 
 export interface IDeleteFooterRequest extends IBaseGoogleDocsRequest {
 	deleteFooter: {
@@ -72,7 +70,7 @@ const deleteFooterRequest: RequestDefinition = {
 	value: 'deleteFooter',
 	category: 'Headers & Footers',
 	description: deleteFooterDescription,
-	operation: createDeleteFooterRequest,
+	operation: wrapInRequest(createDeleteFooterRequest),
 };
 
 registerRequest(deleteFooterRequest);

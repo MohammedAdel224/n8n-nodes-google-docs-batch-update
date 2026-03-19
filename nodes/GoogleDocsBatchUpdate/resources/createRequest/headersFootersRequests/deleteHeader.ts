@@ -41,24 +41,22 @@ export const deleteHeaderDescription: INodeProperties[] = [
 	},
 ];
 
-export const createDeleteHeaderRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IDeleteHeaderRequest => {
-		const headerId = input.getNodeParameter('headerId', itemIndex) as string;
-		const additionalFields = input.getNodeParameter('additionalFields', itemIndex, {}) as { tabId?: string };
+export const createDeleteHeaderRequest = (input: IExecuteFunctions, itemIndex: number): IDeleteHeaderRequest => {
+	const headerId = input.getNodeParameter('headerId', itemIndex) as string;
+	const additionalFields = input.getNodeParameter('additionalFields', itemIndex, {}) as { tabId?: string };
 
-		const deleteHeaderRequest: IDeleteHeaderRequest = {
-			deleteHeader: {
-				headerId,
-			},
-		};
+	const deleteHeaderRequest: IDeleteHeaderRequest = {
+		deleteHeader: {
+			headerId,
+		},
+	};
 
-		if (additionalFields.tabId) {
-			deleteHeaderRequest.deleteHeader.tabId = additionalFields.tabId;
-		}
+	if (additionalFields.tabId) {
+		deleteHeaderRequest.deleteHeader.tabId = additionalFields.tabId;
+	}
 
-		return deleteHeaderRequest;
-	},
-);
+	return deleteHeaderRequest;
+};
 
 export interface IDeleteHeaderRequest extends IBaseGoogleDocsRequest {
 	deleteHeader: {
@@ -72,7 +70,7 @@ const deleteHeaderRequest: RequestDefinition = {
 	value: 'deleteHeader',
 	category: 'Headers & Footers',
 	description: deleteHeaderDescription,
-	operation: createDeleteHeaderRequest,
+	operation: wrapInRequest(createDeleteHeaderRequest),
 };
 
 registerRequest(deleteHeaderRequest);

@@ -25,19 +25,17 @@ export const insertTableRowDescription: INodeProperties[] = [
     },
 ];
 
-export const createInsertTableRowRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IInsertTableRowRequest => {
-        const location = tableCellLocation.getObject(input, itemIndex);
-        const insertBelow = input.getNodeParameter('insertBelow', itemIndex, true) as boolean;
+export const createInsertTableRowRequest = (input: IExecuteFunctions, itemIndex: number): IInsertTableRowRequest => {
+    const location = tableCellLocation.getObject(input, itemIndex);
+    const insertBelow = input.getNodeParameter('insertBelow', itemIndex, true) as boolean;
 
-        return {
-            insertTableRow: {
-                tableCellLocation: location,
-                insertBelow,
-            }
-        };
-    }
-);
+    return {
+        insertTableRow: {
+            tableCellLocation: location,
+            insertBelow,
+        }
+    };
+};
 
 export interface IInsertTableRowRequest extends IBaseGoogleDocsRequest {
     insertTableRow: {
@@ -51,7 +49,7 @@ const insertTableRowRequest: RequestDefinition = {
     value: 'insertTableRow',
     category: 'Tables',
     description: insertTableRowDescription,
-    operation: createInsertTableRowRequest,
+    operation: wrapInRequest(createInsertTableRowRequest),
 };
 
 registerRequest(insertTableRowRequest);

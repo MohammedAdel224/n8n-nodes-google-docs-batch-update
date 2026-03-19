@@ -56,41 +56,39 @@ export const updateTableRowStyleDescription: INodeProperties[] = [
     },
 ];
 
-export const createUpdateTableRowStyleRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IUpdateTableRowStyleRequest => {
-        const locationObj = location.getObject(input, itemIndex);
-        const tableStartLocation = locationObj;
+export const createUpdateTableRowStyleRequest = (input: IExecuteFunctions, itemIndex: number): IUpdateTableRowStyleRequest => {
+    const locationObj = location.getObject(input, itemIndex);
+    const tableStartLocation = locationObj;
 
-        let rowIndices = input.getNodeParameter('rowIndices', itemIndex, null) as string | number | string[]| number[];
-        let rowIndicesArray: number[] = [];
+    let rowIndices = input.getNodeParameter('rowIndices', itemIndex, null) as string | number | string[]| number[];
+    let rowIndicesArray: number[] = [];
 
-        if (rowIndices !== null) {
-            if (typeof rowIndices === 'string') {
-                rowIndices = rowIndices.startsWith('[') ? rowIndices.slice(1, -1) : rowIndices;
-                rowIndices = rowIndices.endsWith(']') ? rowIndices.slice(0, -1) : rowIndices;
-                rowIndicesArray = rowIndices.split(',').map(id => parseInt(id.trim(), 10));
-            }
-            else if(Array.isArray(rowIndices)) {
-                rowIndicesArray = rowIndices.map(index => Number(index));
-            }
-            else {
-                rowIndicesArray = [rowIndices];
-            }
+    if (rowIndices !== null) {
+        if (typeof rowIndices === 'string') {
+            rowIndices = rowIndices.startsWith('[') ? rowIndices.slice(1, -1) : rowIndices;
+            rowIndices = rowIndices.endsWith(']') ? rowIndices.slice(0, -1) : rowIndices;
+            rowIndicesArray = rowIndices.split(',').map(id => parseInt(id.trim(), 10));
         }
-
-        const style = tableRowStyle.getObject(input, itemIndex, 'style');
-        const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
-
-        return {
-            updateTableRowStyle: {
-                tableStartLocation,
-                rowIndices: rowIndicesArray,
-                tableRowStyle: style,
-                fields: fields.join(','),
-            }
-        };
+        else if(Array.isArray(rowIndices)) {
+            rowIndicesArray = rowIndices.map(index => Number(index));
+        }
+        else {
+            rowIndicesArray = [rowIndices];
+        }
     }
-);
+
+    const style = tableRowStyle.getObject(input, itemIndex, 'style');
+    const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
+
+    return {
+        updateTableRowStyle: {
+            tableStartLocation,
+            rowIndices: rowIndicesArray,
+            tableRowStyle: style,
+            fields: fields.join(','),
+        }
+    };
+};
 
 export interface IUpdateTableRowStyleRequest extends IBaseGoogleDocsRequest {
     updateTableRowStyle: {
@@ -106,7 +104,7 @@ const updateTableRowStyleRequest: RequestDefinition = {
     value: 'updateTableRowStyle',
     category: 'Tables',
     description: updateTableRowStyleDescription,
-    operation: createUpdateTableRowStyleRequest,
+    operation: wrapInRequest(createUpdateTableRowStyleRequest),
 };
 
 registerRequest(updateTableRowStyleRequest);

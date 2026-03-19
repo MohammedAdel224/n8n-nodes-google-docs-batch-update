@@ -22,17 +22,15 @@ export const deleteTabDescription: INodeProperties[] = [
 	},
 ];
 
-export const createDeleteTabRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IDeleteTabRequest => {
-		const tabId = input.getNodeParameter('tabId', itemIndex) as string;
+export const createDeleteTabRequest = (input: IExecuteFunctions, itemIndex: number): IDeleteTabRequest => {
+	const tabId = input.getNodeParameter('tabId', itemIndex) as string;
 
-		return {
-			deleteTab: {
-				tabId,
-			},
-		};
-	},
-);
+	return {
+		deleteTab: {
+			tabId,
+		},
+	};
+};
 
 export interface IDeleteTabRequest extends IBaseGoogleDocsRequest {
 	deleteTab: {
@@ -45,7 +43,7 @@ const deleteTabRequest: RequestDefinition = {
 	value: 'deleteTab',
 	category: 'Tabs',
 	description: deleteTabDescription,
-	operation: createDeleteTabRequest,
+	operation: wrapInRequest(createDeleteTabRequest),
 };
 
 registerRequest(deleteTabRequest);

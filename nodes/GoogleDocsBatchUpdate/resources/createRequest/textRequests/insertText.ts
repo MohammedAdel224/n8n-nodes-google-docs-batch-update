@@ -26,19 +26,17 @@ export const insertTextDescription: INodeProperties[] = [
     ...insertionLocation.getDescription()
 ];
 
-export const createInsertTextRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IInsertTextRequest => {
-        const text = input.getNodeParameter('text', itemIndex) as string;
-        const location = insertionLocation.getObject(input, itemIndex);
+export const createInsertTextRequest = (input: IExecuteFunctions, itemIndex: number): IInsertTextRequest => {
+    const text = input.getNodeParameter('text', itemIndex) as string;
+    const location = insertionLocation.getObject(input, itemIndex);
 
-        return { 
-            insertText: {
-                text: text,
-                ...location
-            } 
-        };
-    }
-);
+    return { 
+        insertText: {
+            text: text,
+            ...location
+        } 
+    };
+};
 
 export interface IInsertTextRequest extends IBaseGoogleDocsRequest {
     insertText: {
@@ -51,7 +49,7 @@ const insertTextRequest: RequestDefinition = {
     value: 'insertText',
     category: 'Text',
     description: insertTextDescription,
-    operation: createInsertTextRequest,
+    operation: wrapInRequest(createInsertTextRequest),
 };
 
 registerRequest(insertTextRequest);

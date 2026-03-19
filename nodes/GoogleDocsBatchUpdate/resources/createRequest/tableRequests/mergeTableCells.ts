@@ -15,17 +15,15 @@ export const mergeTableCellsDescription: INodeProperties[] = [
 	...tableRange.getDescription(),
 ];
 
-export const createMergeTableCellsRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IMergeTableCellsRequest => {
-		const range = tableRange.getObject(input, itemIndex) as ITableRange;
+export const createMergeTableCellsRequest = (input: IExecuteFunctions, itemIndex: number): IMergeTableCellsRequest => {
+	const range = tableRange.getObject(input, itemIndex) as ITableRange;
 
-		return {
-			mergeTableCells: {
-				tableRange: range,
-			},
-		};
-	},
-);
+	return {
+		mergeTableCells: {
+			tableRange: range,
+		},
+	};
+};
 
 export interface IMergeTableCellsRequest extends IBaseGoogleDocsRequest {
 	mergeTableCells: {
@@ -38,7 +36,7 @@ const mergeTableCellsRequest: RequestDefinition = {
 	value: 'mergeTableCells',
 	category: 'Tables',
 	description: mergeTableCellsDescription,
-	operation: createMergeTableCellsRequest,
+	operation: wrapInRequest(createMergeTableCellsRequest),
 };
 
 registerRequest(mergeTableCellsRequest);

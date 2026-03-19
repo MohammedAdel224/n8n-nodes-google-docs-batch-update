@@ -40,21 +40,19 @@ export const updateParagraphStyleDescription: INodeProperties[] = [
     },
 ];
 
-export const createUpdateParagraphStyleRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IUpdateParagraphStyleRequest => {
-        const range_ = range.getObject(input, itemIndex);
-        const style = paragraphStyle.getObject(input, itemIndex, 'style');
-        const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
+export const createUpdateParagraphStyleRequest = (input: IExecuteFunctions, itemIndex: number): IUpdateParagraphStyleRequest => {
+    const range_ = range.getObject(input, itemIndex);
+    const style = paragraphStyle.getObject(input, itemIndex, 'style');
+    const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
 
-        return {
-            updateParagraphStyle: {
-                range: range_,
-                paragraphStyle: style,
-                fields: fields.join(','),
-            },
-        };
-    }
-);
+    return {
+        updateParagraphStyle: {
+            range: range_,
+            paragraphStyle: style,
+            fields: fields.join(','),
+        },
+    };
+};
 
 export interface IUpdateParagraphStyleRequest extends IBaseGoogleDocsRequest {
     updateParagraphStyle: {
@@ -69,7 +67,7 @@ const updateParagraphStyleTextRequest: RequestDefinition = {
     value: 'updateParagraphStyle',
     category: 'Text',
     description: updateParagraphStyleDescription,
-    operation: createUpdateParagraphStyleRequest,
+    operation: wrapInRequest(createUpdateParagraphStyleRequest),
 };
 
 registerRequest(updateParagraphStyleTextRequest);

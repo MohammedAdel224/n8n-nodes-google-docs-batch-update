@@ -41,24 +41,22 @@ export const deletePositionedObjectDescription: INodeProperties[] = [
     },
 ];
 
-export const createDeletePositionedObjectRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IDeletePositionedObjectRequest => {
-        const objectId = input.getNodeParameter('objectId', itemIndex) as string;
-        const additionalFields = input.getNodeParameter('additionalFields', itemIndex, {}) as { tabId?: string };
+export const createDeletePositionedObjectRequest = (input: IExecuteFunctions, itemIndex: number): IDeletePositionedObjectRequest => {
+    const objectId = input.getNodeParameter('objectId', itemIndex) as string;
+    const additionalFields = input.getNodeParameter('additionalFields', itemIndex, {}) as { tabId?: string };
 
-        const deletePositionedObjectRequest: IDeletePositionedObjectRequest = {
-            deletePositionedObject: {
-                objectId,
-            }
-        };
-
-        if (additionalFields.tabId) {
-            deletePositionedObjectRequest.deletePositionedObject.tabId = additionalFields.tabId;
+    const deletePositionedObjectRequest: IDeletePositionedObjectRequest = {
+        deletePositionedObject: {
+            objectId,
         }
+    };
 
-        return deletePositionedObjectRequest;
+    if (additionalFields.tabId) {
+        deletePositionedObjectRequest.deletePositionedObject.tabId = additionalFields.tabId;
     }
-);
+
+    return deletePositionedObjectRequest;
+};
 
 export interface IDeletePositionedObjectRequest extends IBaseGoogleDocsRequest {
     deletePositionedObject: {
@@ -72,7 +70,7 @@ const deletePositionedObjectRequest: RequestDefinition = {
     value: 'deletePositionedObject',
     category: 'Document',
     description: deletePositionedObjectDescription,
-    operation: createDeletePositionedObjectRequest,
+    operation: wrapInRequest(createDeletePositionedObjectRequest),
 };
 
 registerRequest(deletePositionedObjectRequest);

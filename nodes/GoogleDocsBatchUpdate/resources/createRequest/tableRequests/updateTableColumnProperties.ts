@@ -55,42 +55,40 @@ export const updateTableColumnPropertiesDescription: INodeProperties[] = [
     },
 ];
 
-export const createUpdateTableColumnPropertiesRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): IUpdateTableColumnPropertiesRequest => {
-        const locationObj = location.getObject(input, itemIndex);
-        const tableStartLocation = locationObj;
+export const createUpdateTableColumnPropertiesRequest = (input: IExecuteFunctions, itemIndex: number): IUpdateTableColumnPropertiesRequest => {
+    const locationObj = location.getObject(input, itemIndex);
+    const tableStartLocation = locationObj;
 
-        let columnIndices = input.getNodeParameter('columnIndices', itemIndex, null) as string | number | string[]| number[];
-        let columnIndicesArray: number[] = [];
+    let columnIndices = input.getNodeParameter('columnIndices', itemIndex, null) as string | number | string[]| number[];
+    let columnIndicesArray: number[] = [];
 
-        if (columnIndices !== null) {
-            if (typeof columnIndices === 'string') {
-                columnIndices = columnIndices.startsWith('[') ? columnIndices.slice(1, -1) : columnIndices;
-                columnIndices = columnIndices.endsWith(']') ? columnIndices.slice(0, -1) : columnIndices;
-                columnIndicesArray = columnIndices.split(',').map(id => parseInt(id.trim(), 10));
-            }
-            else if(Array.isArray(columnIndices)) {
-                columnIndicesArray = columnIndices.map(index => Number(index));
-            }
-            else {
-                columnIndicesArray = [columnIndices];
-            }
+    if (columnIndices !== null) {
+        if (typeof columnIndices === 'string') {
+            columnIndices = columnIndices.startsWith('[') ? columnIndices.slice(1, -1) : columnIndices;
+            columnIndices = columnIndices.endsWith(']') ? columnIndices.slice(0, -1) : columnIndices;
+            columnIndicesArray = columnIndices.split(',').map(id => parseInt(id.trim(), 10));
         }
-
-        const properties = tableColumnProperties.getObject(input, itemIndex, 'properties');
-        const fieldsArr = input.getNodeParameter('fields', itemIndex, []) as string[];
-        const fields = fieldsArr.join(',');
-
-        return {
-            updateTableColumnProperties: {
-                tableStartLocation,
-                columnIndices: columnIndicesArray,
-                tableColumnProperties: properties,
-                fields,
-            }
-        };
+        else if(Array.isArray(columnIndices)) {
+            columnIndicesArray = columnIndices.map(index => Number(index));
+        }
+        else {
+            columnIndicesArray = [columnIndices];
+        }
     }
-);
+
+    const properties = tableColumnProperties.getObject(input, itemIndex, 'properties');
+    const fieldsArr = input.getNodeParameter('fields', itemIndex, []) as string[];
+    const fields = fieldsArr.join(',');
+
+    return {
+        updateTableColumnProperties: {
+            tableStartLocation,
+            columnIndices: columnIndicesArray,
+            tableColumnProperties: properties,
+            fields,
+        }
+    };
+};
 
 export interface IUpdateTableColumnPropertiesRequest extends IBaseGoogleDocsRequest {
     updateTableColumnProperties: {
@@ -106,7 +104,7 @@ const updateTableColumnPropertiesRequest: RequestDefinition = {
     value: 'updateTableColumnProperties',
     category: 'Tables',
     description: updateTableColumnPropertiesDescription,
-    operation: createUpdateTableColumnPropertiesRequest,
+    operation: wrapInRequest(createUpdateTableColumnPropertiesRequest),
 };
 
 registerRequest(updateTableColumnPropertiesRequest);

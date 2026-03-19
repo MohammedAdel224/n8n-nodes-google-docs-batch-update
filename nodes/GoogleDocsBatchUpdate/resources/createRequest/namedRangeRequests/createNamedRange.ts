@@ -33,26 +33,24 @@ export interface ICreateNamedRangeRequest extends IBaseGoogleDocsRequest {
     }
 }
 
-export const createCreateNamedRangeRequest = wrapInRequest(
-    (input: IExecuteFunctions, itemIndex: number): ICreateNamedRangeRequest => {
-        const name = input.getNodeParameter('name', itemIndex) as string;
-        const range_ = range.getObject(input, itemIndex);
+export const createCreateNamedRangeRequest = (input: IExecuteFunctions, itemIndex: number): ICreateNamedRangeRequest => {
+    const name = input.getNodeParameter('name', itemIndex) as string;
+    const range_ = range.getObject(input, itemIndex);
 
-        return {
-            createNamedRange: {
-                name,
-                range: range_,
-            }
-        };
-    }
-);
+    return {
+        createNamedRange: {
+            name,
+            range: range_,
+        }
+    };
+};
 
 const createNamedRangeRequest: RequestDefinition = {
     name: 'Create Named Range',
     value: 'createNamedRange',
     category: 'Named Ranges',
     description: createNamedRangeDescription,
-    operation: createCreateNamedRangeRequest,
+    operation: wrapInRequest(createCreateNamedRangeRequest),
 };
 
 registerRequest(createNamedRangeRequest);

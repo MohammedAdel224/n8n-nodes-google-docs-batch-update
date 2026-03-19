@@ -15,17 +15,15 @@ export const createFootnoteDescription: INodeProperties[] = [
 	...insertionLocation.getDescription(),
 ];
 
-export const createFootnoteRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): ICreateFootnoteRequest => {
-		const location = insertionLocation.getObject(input, itemIndex);
+export const createFootnoteRequest = (input: IExecuteFunctions, itemIndex: number): ICreateFootnoteRequest => {
+	const location = insertionLocation.getObject(input, itemIndex);
 
-		return {
-			createFootnote: {
-				...location,
-			},
-		};
-	},
-);
+	return {
+		createFootnote: {
+			...location,
+		},
+	};
+};
 
 export interface ICreateFootnoteRequest extends IBaseGoogleDocsRequest {
 	createFootnote: IInsertionLocation;
@@ -36,7 +34,7 @@ const request: RequestDefinition = {
 	value: 'createFootnote',
 	category: 'Document',
 	description: createFootnoteDescription,
-	operation: createFootnoteRequest,
+	operation: wrapInRequest(createFootnoteRequest),
 };
 
 registerRequest(request);

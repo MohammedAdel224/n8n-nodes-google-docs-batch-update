@@ -27,24 +27,22 @@ export const createFooterDescription: INodeProperties[] = [
 	...location.getDescription(),
 ];
 
-export const createFooterRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): ICreateFooterRequest => {
-		const type = input.getNodeParameter('type', itemIndex) as string;
-		const sectionBreakLocation = location.getObject(input, itemIndex);
+export const createFooterRequest = (input: IExecuteFunctions, itemIndex: number): ICreateFooterRequest => {
+	const type = input.getNodeParameter('type', itemIndex) as string;
+	const sectionBreakLocation = location.getObject(input, itemIndex);
 
-		const request: ICreateFooterRequest = {
-			createFooter: {
-				type,
-			},
-		};
+	const request: ICreateFooterRequest = {
+		createFooter: {
+			type,
+		},
+	};
 
-		if (sectionBreakLocation) {
-			request.createFooter.sectionBreakLocation = sectionBreakLocation;
-		}
+	if (sectionBreakLocation) {
+		request.createFooter.sectionBreakLocation = sectionBreakLocation;
+	}
 
-		return request;
-	},
-);
+	return request;
+};
 
 export interface ICreateFooterRequest extends IBaseGoogleDocsRequest {
 	createFooter: {
@@ -58,7 +56,7 @@ const request: RequestDefinition = {
 	value: 'createFooter',
 	category: 'Headers & Footers',
 	description: createFooterDescription,
-	operation: createFooterRequest,
+	operation: wrapInRequest(createFooterRequest),
 };
 
 registerRequest(request);

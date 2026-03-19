@@ -36,19 +36,17 @@ export const updateDocumentTabPropertiesDescription: INodeProperties[] = [
 	},
 ];
 
-export const createUpdateDocumentTabPropertiesRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IUpdateDocumentTabPropertiesRequest => {
-		const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
-		const properties = tabProperties.getObject(input, itemIndex, 'tabProperties');
+export const createUpdateDocumentTabPropertiesRequest = (input: IExecuteFunctions, itemIndex: number): IUpdateDocumentTabPropertiesRequest => {
+	const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
+	const properties = tabProperties.getObject(input, itemIndex, 'tabProperties');
 
-		return {
-			updateDocumentTabProperties: {
-				tabProperties: properties,
-				fields: fields.join(','),
-			},
-		};
-	},
-);
+	return {
+		updateDocumentTabProperties: {
+			tabProperties: properties,
+			fields: fields.join(','),
+		},
+	};
+};
 
 export interface IUpdateDocumentTabPropertiesRequest extends IBaseGoogleDocsRequest {
 	updateDocumentTabProperties: {
@@ -62,7 +60,7 @@ const updateDocumentTabPropertiesRequest: RequestDefinition = {
 	value: 'updateDocumentTabProperties',
 	category: 'Tabs',
 	description: updateDocumentTabPropertiesDescription,
-	operation: createUpdateDocumentTabPropertiesRequest,
+	operation: wrapInRequest(createUpdateDocumentTabPropertiesRequest),
 };
 
 registerRequest(updateDocumentTabPropertiesRequest);

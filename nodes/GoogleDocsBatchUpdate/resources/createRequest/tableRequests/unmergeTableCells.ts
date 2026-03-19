@@ -15,17 +15,15 @@ export const unmergeTableCellsDescription: INodeProperties[] = [
 	...tableRange.getDescription(),
 ];
 
-export const createUnmergeTableCellsRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IUnmergeTableCellsRequest => {
-		const range = tableRange.getObject(input, itemIndex) as ITableRange;
+export const createUnmergeTableCellsRequest = (input: IExecuteFunctions, itemIndex: number): IUnmergeTableCellsRequest => {
+	const range = tableRange.getObject(input, itemIndex) as ITableRange;
 
-		return {
-			unmergeTableCells: {
-				tableRange: range,
-			},
-		};
-	},
-);
+	return {
+		unmergeTableCells: {
+			tableRange: range,
+		},
+	};
+};
 
 export interface IUnmergeTableCellsRequest extends IBaseGoogleDocsRequest {
 	unmergeTableCells: {
@@ -38,7 +36,7 @@ const unmergeTableCellsRequest: RequestDefinition = {
 	value: 'unmergeTableCells',
 	category: 'Tables',
 	description: unmergeTableCellsDescription,
-	operation: createUnmergeTableCellsRequest,
+	operation: wrapInRequest(createUnmergeTableCellsRequest),
 };
 
 registerRequest(unmergeTableCellsRequest);

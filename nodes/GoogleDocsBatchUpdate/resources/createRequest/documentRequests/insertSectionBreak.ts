@@ -27,19 +27,17 @@ export const insertSectionBreakDescription: INodeProperties[] = [
 	...insertionLocation.getDescription(),
 ];
 
-export const createInsertSectionBreakRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IInsertSectionBreakRequest => {
-		const type = input.getNodeParameter('sectionType', itemIndex) as string;
-		const location = insertionLocation.getObject(input, itemIndex);
+export const createInsertSectionBreakRequest = (input: IExecuteFunctions, itemIndex: number): IInsertSectionBreakRequest => {
+	const type = input.getNodeParameter('sectionType', itemIndex) as string;
+	const location = insertionLocation.getObject(input, itemIndex);
 
-		return {
-			insertSectionBreak: {
-				sectionType: type,
-				...location,
-			},
-		};
-	},
-);
+	return {
+		insertSectionBreak: {
+			sectionType: type,
+			...location,
+		},
+	};
+};
 
 export interface IInsertSectionBreakRequest extends IBaseGoogleDocsRequest {
 	insertSectionBreak: {
@@ -52,7 +50,7 @@ const insertSectionBreakRequest: RequestDefinition = {
 	value: 'insertSectionBreak',
 	category: 'Document',
 	description: insertSectionBreakDescription,
-	operation: createInsertSectionBreakRequest,
+	operation: wrapInRequest(createInsertSectionBreakRequest),
 };
 
 registerRequest(insertSectionBreakRequest);

@@ -55,26 +55,24 @@ export const updateSectionStyleDescription: INodeProperties[] = [
 	}
 ];
 
-export const createUpdateSectionStyleRequest = wrapInRequest(
-	(input: IExecuteFunctions, itemIndex: number): IUpdateSectionStyleRequest => {
-		const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
-		const style = sectionStyle.getObject(input, itemIndex, 'sectionStyle');
-		const rangeData = range.getObject(input, itemIndex, 'range.values');
+export const createUpdateSectionStyleRequest = (input: IExecuteFunctions, itemIndex: number): IUpdateSectionStyleRequest => {
+	const fields = input.getNodeParameter('fields', itemIndex, []) as string[];
+	const style = sectionStyle.getObject(input, itemIndex, 'sectionStyle');
+	const rangeData = range.getObject(input, itemIndex, 'range.values');
 
-		const updateSectionStyleRequest: IUpdateSectionStyleRequest = {
-			updateSectionStyle: {
-				sectionStyle: style,
-				fields: fields.join(','),
-			},
-		};
+	const updateSectionStyleRequest: IUpdateSectionStyleRequest = {
+		updateSectionStyle: {
+			sectionStyle: style,
+			fields: fields.join(','),
+		},
+	};
 
-		if (rangeData) {
-			updateSectionStyleRequest.updateSectionStyle.range = rangeData;
-		}
+	if (rangeData) {
+		updateSectionStyleRequest.updateSectionStyle.range = rangeData;
+	}
 
-		return updateSectionStyleRequest;
-	},
-);
+	return updateSectionStyleRequest;
+};
 
 export interface IUpdateSectionStyleRequest extends IBaseGoogleDocsRequest {
     updateSectionStyle: {
@@ -89,7 +87,7 @@ const updateSectionStyleRequest: RequestDefinition = {
 	value: 'updateSectionStyle',
 	category: 'Document',
 	description: updateSectionStyleDescription,
-	operation: createUpdateSectionStyleRequest,
+	operation: wrapInRequest(createUpdateSectionStyleRequest),
 };
 
 registerRequest(updateSectionStyleRequest);
