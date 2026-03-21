@@ -80,12 +80,12 @@ export type IGoogleDocsRequest =
     IUpdateTableRowStyleRequest | 
     IUpdateTextStyleRequest;
 
-export type IOperation = (input: IExecuteFunctions, itemIndex: number) => IBaseGoogleDocsRequest;
+export type IOperation = (input: IExecuteFunctions, itemIndex: number) => IBaseGoogleDocsRequest | IGoogleDocsRequest[];
 
 export interface RequestDefinition {
     name: string;
     value: string;
     category: string;
     description: INodeProperties[];
-    operation: (input: IExecuteFunctions, itemIndex: number) => IGoogleDocsRequest;
+    operation: (input: IExecuteFunctions, itemIndex: number) => IGoogleDocsRequest | IGoogleDocsRequest[];
 }
