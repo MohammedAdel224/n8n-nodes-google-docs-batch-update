@@ -26,7 +26,7 @@ export class Location extends IGoogleDocsObject {
         super(description);
     }
 
-    public getObject(input: IExecuteFunctions, itemIndex: number, path: string = ''): ILocation | undefined {
+    public getObject(input: IExecuteFunctions, itemIndex: number, path: string = ''): ILocation {
         const endOfSegmentLocation = new EndOfSegmentLocation();
         const segmentLocation = endOfSegmentLocation.getObject(input, itemIndex, path);
 
@@ -34,10 +34,6 @@ export class Location extends IGoogleDocsObject {
         const index = input.getNodeParameter(indexPath, itemIndex, null) as number;
 
         const location: ILocation = { index, ...segmentLocation };
-
-        if (Object.keys(location).length === 0) {
-            return undefined;
-        }
 
         return location;
     }
