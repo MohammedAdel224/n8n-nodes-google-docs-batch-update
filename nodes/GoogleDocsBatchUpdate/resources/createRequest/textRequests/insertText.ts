@@ -16,6 +16,7 @@ export const insertTextDescription: INodeProperties[] = [
         displayName: 'Text',
         name: 'text',
         type: 'string',
+        required: true,
         default: '',
         placeholder: 'Text to insert',
         description: 'Text to insert into the document',
