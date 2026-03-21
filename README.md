@@ -84,7 +84,7 @@ Note: Credentials are only required when using **Send Request**. All **Create â€
 
 ### Create Request operations
 
-The node provides **37** request builders across these categories:
+The node provides **38** request builders across these categories:
 
 <details>
 <summary><strong>Bullets</strong> (2)</summary>
@@ -163,8 +163,9 @@ The node provides **37** request builders across these categories:
 </details>
 
 <details>
-<summary><strong>Text</strong> (3)</summary>
+<summary><strong>Text</strong> (4)</summary>
 
+- Insert Styled Text (`insertStyledText`)
 - Insert Text (`insertText`)
 - Replace All Text (`replaceAllText`)
 - Update Text Style (`updateTextStyle`)

@@ -18,6 +18,7 @@ import './imageRequests/insertInlineImage';
 import './documentRequests/insertPageBreak';
 import './documentRequests/insertPerson';
 import './documentRequests/insertSectionBreak';
+import './textRequests/insertStyledText';
 import './tableRequests/insertTable';
 import './tableRequests/insertTableColumn';
 import './tableRequests/insertTableRow';
