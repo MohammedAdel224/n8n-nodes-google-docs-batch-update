@@ -163,7 +163,7 @@ export class TextStyle extends IGoogleDocsObject {
         if (style?.foregroundColor) {
             textStyle.foregroundColor = color.getObject(input, itemIndex, `${path}.foregroundColor`);
         }
-        if (fontSize !== null) {
+        if (fontSize !== undefined) {
             textStyle.fontSize = fontSize;
         }
         if (weightedFontFamily_ !== undefined) {
