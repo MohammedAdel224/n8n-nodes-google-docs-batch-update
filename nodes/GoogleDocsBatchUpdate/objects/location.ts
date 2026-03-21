@@ -3,7 +3,7 @@ import type { INodeProperties, IExecuteFunctions } from 'n8n-workflow';
 import { EndOfSegmentLocation, IEndOfSegmentLocation } from './endOfSegmentLocation';
 
 export interface ILocation extends IEndOfSegmentLocation {
-    index?: number;
+    index: number;
 }
 
 export class Location extends IGoogleDocsObject {
@@ -33,10 +33,7 @@ export class Location extends IGoogleDocsObject {
         const indexPath = path ? `${path}.index` : 'index';
         const index = input.getNodeParameter(indexPath, itemIndex, null) as number;
 
-        const location: ILocation = { ...segmentLocation };
-        if (index !== null) {
-            location.index = index;
-        }
+        const location: ILocation = { index, ...segmentLocation };
 
         if (Object.keys(location).length === 0) {
             return undefined;
