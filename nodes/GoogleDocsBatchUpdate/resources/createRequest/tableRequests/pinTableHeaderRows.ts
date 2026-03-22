@@ -12,9 +12,14 @@ const showForCreateRequestPinTableHeaderRows = {
 const location = new Location(showForCreateRequestPinTableHeaderRows);
 
 export const pinTableHeaderRowsDescription: INodeProperties[] = [
+	...location.getDescription().map((property) => { 
+        return property.name === 'index'? 
+        {...property, displayName: 'Table Start Index'} 
+        : property;
+    }),
 	{
-		displayName: 'Table Header Row Count',
-		name: 'tableHeaderRowCount',
+		displayName: 'Pinned Header Rows Count',
+		name: 'pinnedHeaderRowsCount',
 		type: 'number',
 		default: 1,
 		required: true,
@@ -23,20 +28,15 @@ export const pinTableHeaderRowsDescription: INodeProperties[] = [
 			show: showForCreateRequestPinTableHeaderRows,
 		},
 	},
-	...location.getDescription().map((property) => { 
-        return property.name === 'index'? 
-        {...property, displayName: 'Table Start Index'} 
-        : property;
-    }),
 ];
 
 export const createPinTableHeaderRowsRequest = (input: IExecuteFunctions, itemIndex: number): IPinTableHeaderRowsRequest => {
-	const tableHeaderRowCount = input.getNodeParameter('tableHeaderRowCount', itemIndex) as number;
+	const pinnedHeaderRowsCount = input.getNodeParameter('pinnedHeaderRowsCount', itemIndex) as number;
 	const tableStartLocation = location.getObject(input, itemIndex);
 
 	return {
 		pinTableHeaderRows: {
-			tableHeaderRowCount,
+			pinnedHeaderRowsCount,
 			tableStartLocation,
 		},
 	};
@@ -44,7 +44,7 @@ export const createPinTableHeaderRowsRequest = (input: IExecuteFunctions, itemIn
 
 export interface IPinTableHeaderRowsRequest extends IBaseGoogleDocsRequest {
 	pinTableHeaderRows: {
-		tableHeaderRowCount: number;
+		pinnedHeaderRowsCount: number;
 		tableStartLocation?: ILocation;
 	};
 }
