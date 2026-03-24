@@ -28,7 +28,7 @@ import { IReplaceNamedRangeContentRequest } from './namedRangeRequests/replaceNa
 import { IUnmergeTableCellsRequest } from './tableRequests/unmergeTableCells';
 import { IUpdateDocumentStyleRequest } from './documentRequests/updateDocumentStyle';
 import { IUpdateDocumentTabPropertiesRequest } from './tabRequests/updateDocumentTabProperties';
-import { IUpdateParagraphStyleRequest } from './documentRequests/updateParagraphStyle';
+import { IUpdateParagraphStyleRequest } from './textRequests/updateParagraphStyle';
 import { IUpdateSectionStyleRequest } from './documentRequests/updateSectionStyle';
 import { IUpdateTableCellStyleRequest } from './tableRequests/updateTableCellStyle';
 import { IUpdateTableColumnPropertiesRequest } from './tableRequests/updateTableColumnProperties';
